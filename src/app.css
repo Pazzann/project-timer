@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  color: var(--text-col);
+  font-family: "Segoe UI Semilight", serif;
+}
+
+body{
+  background: var(--background-col);
+}
+
+:root {
+  --background-col: #021526;
+  --secondary-col: #03346E;
+  --primary-col: #3f6c7a;
+  --text-col: #E2E2B6;
+
+  --progress-bar-width: 400px;
+  --progress-bar-height: 400px;
+  --font-size: 5rem;
+}

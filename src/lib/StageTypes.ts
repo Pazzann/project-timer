@@ -1,0 +1,1 @@
+export type StageType = "auto-newstage" | "allow-overlap";

@@ -1,0 +1,32 @@
+
+.timer-button {
+    outline: none;
+    align-items: center;
+    background: var(--primary-col);
+    border: 5px solid var(--secondary-col);
+    border-radius: 8px;
+    color: var(--text-col);
+    text-align: center;
+    font-size: 36px;
+    transition: all 320ms;
+    padding: 5px;
+}
+.timer-button:not([disabled]):hover {
+    outline: none;
+    background: #264d80;
+    cursor: pointer;
+    transform: scale(1.2);
+}
+.timer-button:not([disabled]):focus {
+    outline: none;
+    border: 5px dashed var(--secondary-col);
+}
+.timer-button:not([disabled]):active {
+    outline: none;
+    background: var(--primary-col);
+    cursor: pointer;
+}
+.timer-button:disabled {
+    cursor: default;
+    color: var(--text-col);
+}
