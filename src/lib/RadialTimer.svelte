@@ -9,12 +9,12 @@
     $effect(() => {
         if(overTime){
             if (settings.currentStageTime % 1000 > 500){
-                progressBar.style.background = `#6EACDA`;
+                progressBar.style.background = `var(--timer-background-col)`;
             }else {
-                progressBar.style.background = `#03346E`;
+                progressBar.style.background = `var(--secondary-col)`;
             }
         }else{
-            progressBar.style.background = `conic-gradient(#6EACDA ${(settings.currentStageTime%settings.stages[settings.activeStage].time)/settings.stages[settings.activeStage].time * 360}deg,#03346E 0deg)`;
+            progressBar.style.background = `conic-gradient(var(--timer-background-col) ${(settings.currentStageTime%settings.stages[settings.activeStage].time)/settings.stages[settings.activeStage].time * 360}deg,var(--secondary-col) 0deg)`;
         }
         overTime = settings.currentStageTime >= settings.stages[settings.activeStage].time;
     });

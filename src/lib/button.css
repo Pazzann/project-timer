@@ -13,7 +13,7 @@
 }
 .timer-button:not([disabled]):hover {
     outline: none;
-    background: #264d80;
+    background: var(--secondary-col);
     cursor: pointer;
     transform: scale(1.2);
 }

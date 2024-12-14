@@ -20,6 +20,7 @@
             backgroundCol: "#021526",
             primaryColor: "#3f6c7a",
             secondaryColor: "#03346E",
+            timerSecondaryColor: "#6EACDA",
             textColor: "#E2E2B6",
             timerType: "radial"},
         name: "Default Timer",
@@ -38,6 +39,8 @@
     let progress: ReturnType<typeof setInterval> | null = $state(null);
 
     let menuVisible: boolean = $state(false);
+
+    let deltaTime: number = $state(10000);
 
     // progress = setInterval(() => {
     //   settings.currentStageTime +=10;
@@ -67,6 +70,15 @@
         }
     }
 
+    function onFullResetButtonClick() {
+        settings.currentStageTime = 0;
+        settings.activeStage = 0;
+        if (progress) {
+            clearInterval(progress);
+            progress = null;
+        }
+    }
+
     function changeTimerStage(di: number) {
         let potentialStage = settings.activeStage + di;
         if (potentialStage >= 0 && potentialStage < settings.stages.length) {
@@ -74,6 +86,11 @@
             settings.currentStageTime = 0;
             startTime = Date.now();
         }
+    }
+
+    function changeTimerTime(dt: number){
+        settings.currentStageTime += dt;
+        startTime = Date.now();
     }
 
     function toggleMenu() {
@@ -89,8 +106,18 @@
     function parse() {
         let parsedSettings: Settings = JSON.parse(parseFieldValue);
         // settings.stages = parsedSettings.stages;
+
+        for(let i = 0; i < parsedSettings.stages.length; i++){
+            parsedSettings.stages[i].index = i;
+        }
         settings = parsedSettings;
         parseFieldValue = "";
+        updateColor('--background-col', settings.theme.backgroundCol);
+        updateColor('--primary-col', settings.theme.primaryColor);
+        updateColor('--secondary-col', settings.theme.secondaryColor);
+        updateColor('--timer-background-col', settings.theme.timerSecondaryColor);
+        updateColor('--text-col', settings.theme.textColor);
+
     }
 
     function updateColor(variable: string, value: string) {
@@ -187,6 +214,11 @@
                             />
                             <input
                                     type="color"
+                                    bind:value={settings.theme.timerSecondaryColor}
+                                    oninput={() => updateColor('--timer-background-col', settings.theme.timerSecondaryColor)}
+                            />
+                            <input
+                                    type="color"
                                     bind:value={settings.theme.textColor}
                                     oninput={() => updateColor('--text-col', settings.theme.textColor)}
                             />
@@ -245,9 +277,15 @@
                 <nav class="flex flex-row">
                     <button onclick={onTimerButtonClick} class="timer-button">{progress ? "Pause" : "Start"}</button>
                     <button onclick={onResetButtonClick} class="timer-button">{"Reset"}</button>
+                    <button onclick={onFullResetButtonClick} class="timer-button">{"Full reset"}</button>
                     <div class="flex">
                         <button onclick={()=>changeTimerStage(-1)} class="timer-button">{"<<"}</button>
                         <button onclick={()=>changeTimerStage(1)} class="timer-button">{">>"}</button>
+                    </div>
+                    <div class="flex">
+                        <input class="delta-input text-4xl" type="number" bind:value={deltaTime}/>
+                        <button onclick={()=>changeTimerTime(deltaTime)} class="timer-button">{"▲"}</button>
+                        <button onclick={()=>changeTimerTime(-deltaTime)} class="timer-button">{"▼"}</button>
                     </div>
                 </nav>
 
@@ -299,10 +337,16 @@
         background: var(--primary-col);
         border: 5px solid var(--secondary-col);
         border-radius: 8px;
-        color: #11274b;
         text-align: center;
         font-size: 23px;
         padding: 20px;
+    }
+
+    .delta-input{
+        background: var(--primary-col);
+        border: 5px solid var(--secondary-col);
+        border-radius: 8px;
+        width: 140px;
     }
 
     main {
