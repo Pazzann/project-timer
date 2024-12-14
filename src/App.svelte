@@ -24,9 +24,9 @@
             timerType: "radial"},
         name: "Default Timer",
         stages: [
-            {id: "Default1", time: 15000, type: "allow-overlap"},
-            {id: "Default2", time: 15000, type: "allow-overlap"},
-            {id: "Default3", time: 5000, type: "allow-overlap"},
+            {id: "Default1", time: 15000, type: "allow-overlap", index: 0},
+            {id: "Default2", time: 15000, type: "allow-overlap", index: 1},
+            {id: "Default3", time: 5000, type: "allow-overlap", index: 2},
 
         ],
         showSettings: ["h", "m", "s", "ms"],
@@ -97,8 +97,18 @@
         document.documentElement.style.setProperty(variable, value);
     }
 
+    function deleteStage(index: number) {
+        settings.stages = settings.stages.filter((item) => item.index !== index);
+        for(let i=0;i<settings.stages.length;i++){
+            settings.stages[i].index = i;
+        }
+        shiza++;
+    }
 
 
+
+
+    let shiza = $state(0);
 
 </script>
 
@@ -111,16 +121,21 @@
                 {#if menuVisible}
                     <div transition:fly={{x: -200,  duration: 300}} class="settingsPanelBody flex flex-col gap-1.5">
                         <div class="flex flex-row justify-between w-full"><p> Stages: </p>
-                            <button onclick={()=>{settings.stages.push({id: "Default", time: 15000, type:"allow-overlap"})}}
+                            <button onclick={()=>{settings.stages.push({id: "Default", time: 15000, type:"allow-overlap", index: settings.stages.length})}}
                                     class="timer-button">+
                             </button>
                         </div>
                         <div class="stages-panel flex flex-col overflow-scroll">
+                            {#key shiza}
                             <SortableList
                                     onUpdate={(event) => {
                         let temp = settings.stages[event.oldIndex];
                         settings.stages[event.oldIndex] = settings.stages[event.newIndex];
+                        settings.stages[event.oldIndex].index = event.oldIndex;
                         settings.stages[event.newIndex] = temp;
+                        settings.stages[event.newIndex].index = event.newIndex;
+
+                        shiza+=1;
                         onResetButtonClick();
 
                       }}
@@ -130,10 +145,14 @@
                                     forceFallback={true}
                                     swapThreshold={0.65}
                             >
-                                {#each settings.stages as item, i}
-                                    <StageInput settings={settings} index={i}></StageInput>
-                                {/each}
+
+                                    {#each settings.stages as item}
+                                        <StageInput deleteStage={deleteStage} item={item}></StageInput>
+                                    {/each}
+
+
                             </SortableList>
+                            {/key}
                         </div>
 
                         <div class="flex flex-row gap-1.5">
