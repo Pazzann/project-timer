@@ -13,6 +13,7 @@
         fly
     } from 'svelte/transition';
     import StageInput from "./lib/StageInput.svelte";
+    import type CameraSettings from "./lib/CameraSettings";
 
 
     let settings: Settings = $state({
@@ -22,7 +23,8 @@
             secondaryColor: "#03346E",
             timerSecondaryColor: "#6EACDA",
             textColor: "#E2E2B6",
-            timerType: "radial"},
+            timerType: "radial"
+        },
         name: "Default Timer",
         stages: [
             {id: "Default1", time: 15000, type: "allow-overlap", index: 0},
@@ -34,6 +36,26 @@
         currentStageTime: 0,
         activeStage: 2
     });
+
+    let cameraSettings: CameraSettings = $state({
+        width: 1280,
+        height: 720,
+        fps: 30,
+        enabled: false
+    });
+
+    let cameraSettingsVisible: boolean = $state(false);
+
+    function toggleCameraSettings() {
+        cameraSettingsVisible = !cameraSettingsVisible;
+        if (cameraSettingsVisible) {
+            menuVisible = false;
+        }
+    }
+
+    function changeCameraState() {
+
+    }
 
 
     let progress: ReturnType<typeof setInterval> | null = $state(null);
@@ -88,13 +110,16 @@
         }
     }
 
-    function changeTimerTime(dt: number){
+    function changeTimerTime(dt: number) {
         settings.currentStageTime += dt;
         startTime = Date.now();
     }
 
     function toggleMenu() {
         menuVisible = !menuVisible;
+        if (menuVisible) {
+            cameraSettingsVisible = false;
+        }
     }
 
     function copy() {
@@ -107,7 +132,7 @@
         let parsedSettings: Settings = JSON.parse(parseFieldValue);
         // settings.stages = parsedSettings.stages;
 
-        for(let i = 0; i < parsedSettings.stages.length; i++){
+        for (let i = 0; i < parsedSettings.stages.length; i++) {
             parsedSettings.stages[i].index = i;
         }
         settings = parsedSettings;
@@ -126,13 +151,11 @@
 
     function deleteStage(index: number) {
         settings.stages = settings.stages.filter((item) => item.index !== index);
-        for(let i=0;i<settings.stages.length;i++){
+        for (let i = 0; i < settings.stages.length; i++) {
             settings.stages[i].index = i;
         }
         shiza++;
     }
-
-
 
 
     let shiza = $state(0);
@@ -142,9 +165,15 @@
 <main>
     <div class="main-body">
 
-        <div class="settingsPanel">
+        <div class="defaultSettings settingsPanel">
             {#key settings}
-                <button onclick={toggleMenu} class="timer-button">=</button>
+                <button onclick={toggleMenu} class="timer-button">
+                    {#if menuVisible}
+                        <div class="close-icon"/>
+                    {:else}
+                        <div class="settings-icon"/>
+                    {/if}
+                </button>
                 {#if menuVisible}
                     <div transition:fly={{x: -200,  duration: 300}} class="settingsPanelBody flex flex-col gap-1.5">
                         <div class="flex flex-row justify-between w-full"><p> Stages: </p>
@@ -154,8 +183,8 @@
                         </div>
                         <div class="stages-panel flex flex-col overflow-scroll">
                             {#key shiza}
-                            <SortableList
-                                    onUpdate={(event) => {
+                                <SortableList
+                                        onUpdate={(event) => {
                         let temp = settings.stages[event.oldIndex];
                         settings.stages[event.oldIndex] = settings.stages[event.newIndex];
                         settings.stages[event.oldIndex].index = event.oldIndex;
@@ -166,19 +195,19 @@
                         onResetButtonClick();
 
                       }}
-                                    class="flex flex-col gap-1.5"
-                                    group="nested"
-                                    animation={150}
-                                    forceFallback={true}
-                                    swapThreshold={0.65}
-                            >
+                                        class="flex flex-col gap-1.5"
+                                        group="nested"
+                                        animation={150}
+                                        forceFallback={true}
+                                        swapThreshold={0.65}
+                                >
 
                                     {#each settings.stages as item}
                                         <StageInput deleteStage={deleteStage} item={item}></StageInput>
                                     {/each}
 
 
-                            </SortableList>
+                                </SortableList>
                             {/key}
                         </div>
 
@@ -239,6 +268,62 @@
             {/key}
         </div>
 
+        <div class="cameraSettings settingsPanel">
+            {#key cameraSettings}
+                <button onclick={toggleCameraSettings} class="timer-button">
+                    {#if cameraSettingsVisible}
+                        <div class="close-icon"/>
+                    {:else}
+                        <div class="camera-icon"/>
+                    {/if}
+                </button>
+                {#if cameraSettingsVisible}
+                    <div transition:fly={{x: 200,  duration: 300}}
+                         class="cameraSettingsBody settingsPanelBody flex flex-col gap-1.5">
+                        <p> Camera Settings: </p>
+
+
+                        <div class="flex flex-row gap-1.5 justify-between">
+                            <div>Width:</div>
+                            <input class="parse-in" type="number" bind:value={cameraSettings.width}
+                                   placeholder="width"/>
+                        </div>
+                        
+                        <div class="flex flex-row gap-1.5 justify-between">
+                            <div>Height:</div>
+                            <input class="parse-in" type="number" bind:value={cameraSettings.height}
+                                   placeholder="height"/>
+                        </div>
+                        <div class="flex flex-row gap-1.5 justify-between">
+                            <div>fps:</div>
+                            <input class="parse-in" type="number" bind:value={cameraSettings.fps}
+                                   placeholder="fps"/>
+                        </div>
+
+
+                        <div class="flex flex-row gap-1.5">
+                            Camera Enabled:
+                            {#if cameraSettings.enabled}
+                                Camera Is Working!
+                            {:else}
+                                Camera Is Disabled!
+                            {/if}
+                        </div>
+
+                        <div class="flex flex-row">
+                            <button onclick={changeCameraState} class="timer-button">
+                                {#if cameraSettings.enabled}
+                                    Disable
+                                {:else}
+                                    Enable
+                                {/if}
+                            </button>
+                        </div>
+
+                    </div>
+                {/if}
+            {/key}
+        </div>
 
         {#key settings}
             <input bind:value={settings.name} class="input-name text-center text-7xl" type="text"/>
@@ -297,6 +382,51 @@
 </main>
 
 <style>
+    .camera-icon {
+        width: 36px;
+        height: 36px;
+
+        background-color: var(--text-col);
+
+        -webkit-mask-image: url("/photo-camera.svg");
+        mask-image: url("/photo-camera.svg");
+
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+    }
+
+    .close-icon {
+        width: 36px;
+        height: 36px;
+
+        background-color: var(--text-col);
+
+        -webkit-mask-image: url("/close-circle.svg");
+        mask-image: url("/close-circle.svg");
+
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+    }
+
+    .settings-icon {
+        width: 36px;
+        height: 36px;
+
+        background-color: var(--text-col);
+
+        -webkit-mask-image: url("/settings-2.svg");
+        mask-image: url("/settings-2.svg");
+
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+    }
+
     .input-name {
         background: var(--background-col);
     }
@@ -321,11 +451,21 @@
         max-height: 400px;
     }
 
+    .defaultSettings {
+        left: 10px;
+    }
+
+    .cameraSettings {
+        right: 10px;
+    }
+
+    .cameraSettingsBody {
+        right: 0px;
+    }
 
     .settingsPanel {
         z-index: 10;
         position: absolute;
-        left: 10px;
         top: 10px;
     }
 
@@ -342,7 +482,7 @@
         padding: 20px;
     }
 
-    .delta-input{
+    .delta-input {
         background: var(--primary-col);
         border: 5px solid var(--secondary-col);
         border-radius: 8px;
