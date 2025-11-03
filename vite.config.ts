@@ -5,6 +5,7 @@ import tailwindcss from 'tailwindcss'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [svelte()],
+  base: './',
   css: {
     postcss: {
       plugins: [tailwindcss()],

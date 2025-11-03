@@ -8,6 +8,7 @@ export function msToTime(s: number, showSett: string[]): string {
 
     let ms = s % 1000/10;
     s = (s - ms* 10) / 1000;
+    ms = Math.floor(ms);
     let secs = s % 60;
     s = (s - secs) / 60;
     let mins = s % 60;
