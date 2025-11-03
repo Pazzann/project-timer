@@ -1,7 +1,8 @@
 
 <script lang="ts">
     import {onMount} from "svelte";
-    import type Stage from "./Stage";
+    import type Stage from "../interfaces/Stage";
+    import "../styles/Icons.css";
 
     let {item, deleteStage}: {item: Stage, deleteStage: Function} = $props();
     let name= $state("");
@@ -20,7 +21,7 @@
     <p class="w-full text-center justify-center flex content-center text-4xl h-auto items-center">{+item.index + 1}.</p>
     <input class="input-stage" type="text" oninput={()=>{item.id = name;}} bind:value={name}/>
     <input class="input-stage" type="number" oninput={()=>{item.time = time}} bind:value={time}/>
-    <button onclick={()=>deleteStage(item.index)} class="timer-button">X</button>
+    <button onclick={()=>deleteStage(item.index)} class="timer-button"><div class="icon delete-icon"/></button>
 </div>
 
 <style>

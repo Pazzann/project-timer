@@ -1,4 +1,4 @@
-export function msToTime(s: number, showSett: string[]): string {
+export function MsToTime(s: number, showSett: string[]): string {
 
     // Pad to 2 or 3 digits, default is 2
     function pad(n: number,  z: number = 2): string {
@@ -14,5 +14,8 @@ export function msToTime(s: number, showSett: string[]): string {
     let mins = s % 60;
     let hrs = (s - mins) / 60;
 
-    return (showSett.includes("h") ? pad(hrs) + 'h' : "") + (showSett.includes("m") ?  pad(mins) + 'm' : "") + (showSett.includes("s") ?  pad(secs) + "s" : "") + (showSett.includes("ms") ?  pad(ms) + "ms": "");
+    return (showSett.includes("h") ? pad(hrs) + 'h' : "") +
+            (showSett.includes("m") ?  pad(mins) + 'm' : "") +
+            (showSett.includes("s") ?  pad(secs) + "s" : "") +
+            (showSett.includes("ms") ?  pad(ms) + "ms": "");
 }

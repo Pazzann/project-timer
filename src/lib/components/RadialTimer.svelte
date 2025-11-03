@@ -1,6 +1,6 @@
 <script lang="ts">
-    import {msToTime} from "./Utils";
-    import type Settings from "./Settings";
+    import {MsToTime} from "../functions/MsToTime";
+    import type Settings from "../interfaces/Settings";
     let progressBar : HTMLDivElement;
     let overTime: boolean = false;
 
@@ -26,8 +26,8 @@
 <div  bind:this={progressBar} class="circular-progress" data-inner-circle-color="lightgrey" data-progress-color="crimson" data-bg-color="black">
     <!--<div  class="inner-circle"></div>-->
     <div class="percentage text-5xl font-bold">
-        <p>{msToTime(settings.currentStageTime, settings.showSettings)}</p>
-        <p>{msToTime(settings.stages[settings.activeStage].time, settings.showSettings)}</p>
+        <p>{MsToTime(settings.currentStageTime, settings.showSettings)}</p>
+        <p>{MsToTime(settings.stages[settings.activeStage].time, settings.showSettings)}</p>
     </div>
 
 </div>

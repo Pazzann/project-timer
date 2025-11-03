@@ -1,10 +1,11 @@
 <script lang="ts">
-    import type Settings from "./lib/Settings";
-    import RadialTimer from "./lib/RadialTimer.svelte";
-    import LinearTimer from "./lib/LinearTimer.svelte";
-    import NumberTimer from "./lib/NumberTimer.svelte";
-    import "./lib/button.css";
-    import {msToTime} from "./lib/Utils";
+    import type Settings from "./lib/interfaces/Settings";
+    import RadialTimer from "./lib/components/RadialTimer.svelte";
+    import LinearTimer from "./lib/components/LinearTimer.svelte";
+    import NumberTimer from "./lib/components/NumberTimer.svelte";
+    import "./lib/styles/Button.css";
+    import "./lib/styles/Icons.css";
+    import {MsToTime} from "./lib/functions/MsToTime";
     import {SortableList} from '@jhubbardsf/svelte-sortablejs';
 
     import {
@@ -12,8 +13,8 @@
         scale,
         fly
     } from 'svelte/transition';
-    import StageInput from "./lib/StageInput.svelte";
-    import type CameraSettings from "./lib/CameraSettings";
+    import StageInput from "./lib/components/StageInput.svelte";
+    import type CameraSettings from "./lib/interfaces/CameraSettings";
 
 
     let settings: Settings = $state({
@@ -50,6 +51,15 @@
         cameraSettingsVisible = !cameraSettingsVisible;
         if (cameraSettingsVisible) {
             menuVisible = false;
+            infoVisible = false;
+        }
+    }
+
+    function toggleInfoPanel() {
+        infoVisible = !infoVisible;
+        if (infoVisible) {
+            menuVisible = false;
+            cameraSettingsVisible = false;
         }
     }
 
@@ -61,6 +71,8 @@
     let progress: ReturnType<typeof setInterval> | null = $state(null);
 
     let menuVisible: boolean = $state(false);
+
+    let infoVisible: boolean = $state(false);
 
     let deltaTime: number = $state(10000);
 
@@ -119,6 +131,7 @@
         menuVisible = !menuVisible;
         if (menuVisible) {
             cameraSettingsVisible = false;
+            infoVisible = false;
         }
     }
 
@@ -165,20 +178,21 @@
 <main>
     <div class="main-body">
 
+        <!--Settings-->
         <div class="defaultSettings settingsPanel">
             {#key settings}
                 <button onclick={toggleMenu} class="timer-button">
                     {#if menuVisible}
-                        <div class="close-icon"/>
+                        <div class="close-icon icon"/>
                     {:else}
-                        <div class="settings-icon"/>
+                        <div class="settings-icon icon"/>
                     {/if}
                 </button>
                 {#if menuVisible}
-                    <div transition:fly={{x: -200,  duration: 300}} class="settingsPanelBody flex flex-col gap-1.5">
+                    <div transition:fly={{x: -200,  duration: 300}} class="settingsBody panelBody flex flex-col gap-1.5">
                         <div class="flex flex-row justify-between w-full"><p> Stages: </p>
                             <button onclick={()=>{settings.stages.push({id: "Default", time: 15000, type:"allow-overlap", index: settings.stages.length})}}
-                                    class="timer-button">+
+                                    class="timer-button"><div class="icon add-icon"/>
                             </button>
                         </div>
                         <div class="stages-panel flex flex-col overflow-scroll">
@@ -268,18 +282,19 @@
             {/key}
         </div>
 
+        <!--Camera-->
         <div class="cameraSettings settingsPanel">
             {#key cameraSettings}
                 <button onclick={toggleCameraSettings} class="timer-button">
                     {#if cameraSettingsVisible}
-                        <div class="close-icon"/>
+                        <div class="close-icon icon"/>
                     {:else}
-                        <div class="camera-icon"/>
+                        <div class="camera-icon icon"/>
                     {/if}
                 </button>
                 {#if cameraSettingsVisible}
                     <div transition:fly={{x: 200,  duration: 300}}
-                         class="cameraSettingsBody settingsPanelBody flex flex-col gap-1.5">
+                         class="cameraSettingsBody panelBody flex flex-col gap-1.5">
                         <p> Camera Settings: </p>
 
 
@@ -288,7 +303,7 @@
                             <input class="parse-in" type="number" bind:value={cameraSettings.width}
                                    placeholder="width"/>
                         </div>
-                        
+
                         <div class="flex flex-row gap-1.5 justify-between">
                             <div>Height:</div>
                             <input class="parse-in" type="number" bind:value={cameraSettings.height}
@@ -325,10 +340,28 @@
             {/key}
         </div>
 
+        <!--Info-->
+        <div class="settingsPanel infoPanel">
+            <button onclick={toggleInfoPanel} class="timer-button">
+                {#if infoVisible}
+                    <div class="close-icon icon"/>
+                {:else}
+                    <div class="info-icon icon"/>
+                {/if}
+            </button>
+            {#if infoVisible}
+                <div transition:fly={{x: 200,  duration: 300}}
+                     class="infoSettingsBody panelBody flex flex-col gap-1.5">
+                    La la la
+                    developed by Anton Matiash)
+                </div>
+            {/if}
+        </div>
+
         {#key settings}
             <input bind:value={settings.name} class="input-name text-center text-7xl" type="text"/>
 
-            <div class="timer-body flex flex-col gap-4">
+            <div class="flex flex-col gap-4">
                 <div class="timer content-center justify-center flex flex-row">
                     {#if settings.theme.timerType === "radial"}
                         <RadialTimer settings={settings}></RadialTimer>
@@ -341,7 +374,7 @@
                     <div class="stages-body flex flex-col justify-center content-center gap-1.5">
                         <div class="stage-first-line flex text-center overflow-hidden flex-col-reverse text-2xl">
                             {#each settings.stages.filter((item, index) => index < settings.activeStage).reverse() as item, i}
-                                <p transition:scale>{item.id}   {msToTime(item.time, settings.showSettings)}</p>
+                                <p transition:scale>{item.id}   {MsToTime(item.time, settings.showSettings)}</p>
                             {/each}
                         </div>
 
@@ -353,7 +386,7 @@
                         <div class="stage-last-line flex-col text-center overflow-hidden text-2xl">
                             {#each settings.stages as item, i}
                                 {#if i > settings.activeStage}
-                                    <p transition:scale>{item.id}   {msToTime(item.time, settings.showSettings)}</p>
+                                    <p transition:scale>{item.id}   {MsToTime(item.time, settings.showSettings)}</p>
                                 {/if}
                             {/each}
                         </div>
@@ -382,50 +415,6 @@
 </main>
 
 <style>
-    .camera-icon {
-        width: 36px;
-        height: 36px;
-
-        background-color: var(--text-col);
-
-        -webkit-mask-image: url("/photo-camera.svg");
-        mask-image: url("/photo-camera.svg");
-
-        -webkit-mask-size: contain;
-        mask-size: contain;
-        -webkit-mask-repeat: no-repeat;
-        mask-repeat: no-repeat;
-    }
-
-    .close-icon {
-        width: 36px;
-        height: 36px;
-
-        background-color: var(--text-col);
-
-        -webkit-mask-image: url("/close-circle.svg");
-        mask-image: url("/close-circle.svg");
-
-        -webkit-mask-size: contain;
-        mask-size: contain;
-        -webkit-mask-repeat: no-repeat;
-        mask-repeat: no-repeat;
-    }
-
-    .settings-icon {
-        width: 36px;
-        height: 36px;
-
-        background-color: var(--text-col);
-
-        -webkit-mask-image: url("/settings-2.svg");
-        mask-image: url("/settings-2.svg");
-
-        -webkit-mask-size: contain;
-        mask-size: contain;
-        -webkit-mask-repeat: no-repeat;
-        mask-repeat: no-repeat;
-    }
 
     .input-name {
         background: var(--background-col);
@@ -434,10 +423,6 @@
     .stages-panel {
         max-height: 300px;
 
-    }
-
-    .timer-body {
-        height: var(--progress-bar-height);
     }
 
     nav {
@@ -459,8 +444,20 @@
         right: 10px;
     }
 
+    .infoPanel {
+        right: 80px;
+    }
+
     .cameraSettingsBody {
-        right: 0px;
+        right: 0;
+    }
+
+    .infoSettingsBody{
+        right: -70px;
+    }
+
+    .settingsBody{
+        left: 0;
     }
 
     .settingsPanel {
@@ -469,7 +466,7 @@
         top: 10px;
     }
 
-    .settingsPanelBody {
+    .panelBody {
         position: absolute;
         object-fit: contain;
         outline: none;
@@ -480,6 +477,8 @@
         text-align: center;
         font-size: 23px;
         padding: 20px;
+
+        top: 70px;
     }
 
     .delta-input {
@@ -490,13 +489,19 @@
     }
 
     main {
-        margin: 50px;
+        margin: 10px;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         gap: 40px;
+        scrollbar-width: none;
 
+        overflow: hidden;
+    }
+
+    main::-webkit-scrollbar {
+        display: none;
     }
 
     .sel-stage {

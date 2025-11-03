@@ -1,4 +1,4 @@
-import type {StageType} from "./StageTypes";
+import type {StageType} from "../types/StageTypes";
 
 export default interface Stage {
     id: string;

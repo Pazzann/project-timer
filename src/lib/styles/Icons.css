@@ -1,0 +1,40 @@
+.icon {
+    width: 36px;
+    height: 36px;
+
+    background-color: var(--text-col);
+
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+}
+.camera-icon {
+    -webkit-mask-image: url("public/photo-camera.svg");
+    mask-image: url("public/photo-camera.svg");
+}
+
+.close-icon {
+    -webkit-mask-image: url("public/close-circle.svg");
+    mask-image: url("public/close-circle.svg");
+}
+
+.info-icon {
+    -webkit-mask-image: url("public/info-circle.svg");
+    mask-image: url("public/info-circle.svg");
+}
+
+.settings-icon {
+    -webkit-mask-image: url("public/settings-2.svg");
+    mask-image: url("public/settings-2.svg");
+}
+
+.add-icon{
+    -webkit-mask-image: url("public/add-ellipse.svg");
+    mask-image: url("public/add-ellipse.svg");
+}
+
+.delete-icon{
+    -webkit-mask-image: url("public/delete-2.svg");
+    mask-image: url("public/delete-2.svg");
+}
