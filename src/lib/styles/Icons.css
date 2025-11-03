@@ -10,8 +10,8 @@
     mask-repeat: no-repeat;
 }
 .camera-icon {
-    -webkit-mask-image: url("public/photo-camera.svg");
-    mask-image: url("public/photo-camera.svg");
+    -webkit-mask-image: url("public/camera-front.svg");
+    mask-image: url("public/camera-front.svg");
 }
 
 .close-icon {

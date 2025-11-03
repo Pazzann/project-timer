@@ -29,7 +29,7 @@
     .stage-body{
         border-radius: 10px;
         width: 100%;
-        padding: 10px;
+        padding: 2px;
         border: 5px solid var(--secondary-col);
     }
 
