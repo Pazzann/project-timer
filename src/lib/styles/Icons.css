@@ -58,3 +58,33 @@
     -webkit-mask-image: url("public/right-arrow.svg");
     mask-image: url("public/right-arrow.svg");
 }
+
+.saves-icon{
+    -webkit-mask-image: url("public/save.svg");
+    mask-image: url("public/save.svg");
+}
+
+.palette-icon{
+    -webkit-mask-image: url("public/palette.svg");
+    mask-image: url("public/palette.svg");
+}
+
+.copy-icon{
+    -webkit-mask-image: url("public/copy.svg");
+    mask-image: url("public/copy.svg");
+}
+
+.paste-icon{
+    -webkit-mask-image: url("public/paste.svg");
+    mask-image: url("public/paste.svg");
+}
+
+.reset-icon{
+    -webkit-mask-image: url("public/reset.svg");
+    mask-image: url("public/reset.svg");
+}
+
+.load-icon{
+    -webkit-mask-image: url("public/load-circle.svg");
+    mask-image: url("public/load-circle.svg");
+}

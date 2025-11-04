@@ -2,6 +2,7 @@
 const {app, BrowserWindow, screen} = require('electron');
 const path = require('path');
 const {spawn} = require('child_process');
+const fs = require('fs');
 
 // --- Configuration ---
 const CAM_FPS = 30;
@@ -19,14 +20,24 @@ let captureInterval;
 let isCapturing = false;
 
 
+// Ensure "saves" directory exists
+if (!fs.existsSync(path.join(__dirname, "saves")))
+    fs.mkdirSync(path.join(__dirname, "saves"));
+
+
 // --- Electron App Lifecycle (remains the same) ---
 const createWindow = () => {
     console.log("Creating browser window...");
     mainWindow = new BrowserWindow({
-        width: 900,
-        height: 720,
+        width: 840,
+        height: 700,
         resizable: false,
-        webPreferences: {preload: path.join(__dirname, 'preload.js'), contextIsolation: true, backgroundThrottling: false}
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.cjs'),
+            contextIsolation: true,
+            backgroundThrottling: false,
+            sandbox: false
+        }
     });
     console.log("Loading window content...");
     if (process.env.VITE_DEV_SERVER_URL) {

@@ -9,6 +9,9 @@ lerna-debug.log*
 yarn.lock
 package-lock.json
 
+# app cache
+saves
+
 
 node_modules
 dist

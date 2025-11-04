@@ -16,37 +16,11 @@
     import StageInput from "./lib/components/StageInput.svelte";
     import type CameraSettings from "./lib/interfaces/CameraSettings";
     import type {TimerType} from "./lib/types/TimerType";
+    import {getDefaultSettings} from "./lib/functions/getDefaultSettings";
 
 
     // main variables
-    let isElectron: boolean = $state(false);
-    //@ts-ignore
-    if (window?.api && window?.api.isElectron) {
-        isElectron = true;
-    } else {
-        isElectron = false;
-    }
-
-    let settings: Settings = $state({
-        theme: {
-            backgroundCol: "#021526",
-            primaryColor: "#3f6c7a",
-            secondaryColor: "#03346E",
-            timerSecondaryColor: "#6EACDA",
-            textColor: "#E2E2B6",
-            timerType: "radial"
-        },
-        name: "Default Timer",
-        stages: [
-            {id: "Default1", time: 15000, type: "allow-overlap", index: 0},
-            {id: "Default2", time: 15000, type: "allow-overlap", index: 1},
-            {id: "Default3", time: 5000, type: "allow-overlap", index: 2},
-
-        ],
-        showSettings: ["h", "m", "s", "ms"],
-        currentStageTime: 0,
-        activeStage: 2
-    });
+    let settings: Settings = $state(getDefaultSettings());
 
     let cameraSettings: CameraSettings = $state({
         width: 900,
@@ -54,18 +28,68 @@
         fps: 30,
         enabled: false
     });
+
+
+    let isElectron: boolean = $state(false);
+    let files: string[] = $state([]);
+
+    if (window?.api && window?.api.isElectron) {
+        isElectron = true;
+        readSaves();
+        if(files.length > 0){
+            loadSave(files[files.length - 1]);
+        }
+    } else {
+        isElectron = false;
+    }
+
+    function readSaves(){
+        files = window.api.fs.readdir().filter(file => file.endsWith(".json"));
+    }
+
+    function loadSave(fileName: string){
+        readSaves()
+        if(!files.includes(fileName)){
+            return;
+        }
+        let fileContent: string = window.api.fs.readFile(fileName) as string;
+        parse(fileContent)
+    }
+
+    function deleteSave(fileName: string){
+        window.api.fs.removeFile(fileName);
+        readSaves();
+    }
+
+    function makeSave(){
+        let fileName = settings.name.split(" ").join("_") + ".json";
+        window.api.fs.writeFile(fileName, JSON.stringify(settings));
+        readSaves();
+    }
+
     //
 
     //Menu panels visibility
     let cameraSettingsVisible: boolean = $state(false);
     let menuVisible: boolean = $state(false);
     let infoVisible: boolean = $state(false);
+    let savesVisible: boolean = $state(false);
+
+    function toggleSavesPanel() {
+        savesVisible = !savesVisible;
+        if (savesVisible) {
+            menuVisible = false;
+            cameraSettingsVisible = false;
+            infoVisible = false;
+        }
+    }
 
     function toggleCameraSettings() {
         cameraSettingsVisible = !cameraSettingsVisible;
         if (cameraSettingsVisible) {
             menuVisible = false;
             infoVisible = false;
+            savesVisible = false;
         }
     }
 
@@ -74,6 +98,7 @@
         if (infoVisible) {
             menuVisible = false;
             cameraSettingsVisible = false;
+            savesVisible = false;
         }
     }
 
@@ -82,6 +107,7 @@
         if (menuVisible) {
             cameraSettingsVisible = false;
             infoVisible = false;
+            savesVisible = false;
         }
     }
 
@@ -94,15 +120,14 @@
         navigator.clipboard.writeText(JSON.stringify(settings));
     }
 
-    function parse() {
-        let parsedSettings: Settings = JSON.parse(parseFieldValue);
+    function parse(value: string = parseFieldValue) {
+        let parsedSettings: Settings = JSON.parse(value);
         // settings.stages = parsedSettings.stages;
 
         for (let i = 0; i < parsedSettings.stages.length; i++) {
             parsedSettings.stages[i].index = i;
         }
         settings = parsedSettings;
-        parseFieldValue = "";
         updateColor('--background-col', settings.theme.backgroundCol);
         updateColor('--primary-col', settings.theme.primaryColor);
         updateColor('--secondary-col', settings.theme.secondaryColor);
@@ -131,6 +156,10 @@
             settings.activeStage = settings.stages.length - 1;
         }
         shiza++;
+    }
+
+    function setToDefault(){
+        parse(JSON.stringify(getDefaultSettings()));
     }
 
     //
@@ -297,8 +326,10 @@
                         </div>
 
                         <div class="flex flex-row w-full justify-between items-center">
-                            <p>Colors:</p>
-                            <div class="flex flex-row gap-1.5">
+                            <p>Colors: </p>
+                            <div class="flex flex-row items-center">
+                                <button class="timer-button"><div class="palette-icon icon"/></button>
+                                <div>or</div>
                                 <input
                                         class="custom-color-input"
                                         type="color"
@@ -342,16 +373,49 @@
                             <input class="parse-in w-full" type="text" bind:value={parseFieldValue}
                                    placeholder="parse preset here"/>
                             <div class="flex flex-row gap-3 justify-between">
-                                <button onclick={copy} class="timer-button">Copy</button>
-                                <button onclick={parse} class="timer-button">Parse</button>
+                                <button onclick={copy} class="timer-button"><div class="icon copy-icon"/></button>
+                                <button onclick={()=>{parse(); parseFieldValue="";}} class="timer-button"><div class="icon paste-icon"/></button>
+                                <button onclick={setToDefault} class="timer-button"><div class="icon reset-icon"/></button>
                             </div>
                         </div>
+
+
 
 
                     </div>
                 {/if}
             {/key}
         </div>
+
+        <!--Saves-->
+        {#if isElectron}
+            <div class="savesPanel settingsPanel">
+                <button onclick={toggleSavesPanel} class="timer-button" aria-label="Toggle info panel">
+                    {#if savesVisible}
+                        <div class="close-icon icon"/>
+                    {:else}
+                        <div class="saves-icon icon"/>
+                    {/if}
+                </button>
+                {#if savesVisible}
+                    <div transition:fly={{x: -200,  duration: 300}}
+                         class="savesPanelBody panelBody flex flex-col gap-1.5">
+
+                        <button class="timer-button" onclick={makeSave}><div class="icon saves-icon" /></button>
+                        <p> Saves panel is under development... </p>
+                        {#each files as item}
+                            <div class="flex flex-row justify-between w-full items-center">
+                                <p>{item.split(".json").join("")}</p>
+                                <div class="flex flex-row gap-1.5">
+                                    <button class="timer-button" onclick={()=>loadSave(item)}><div class="icon load-icon" /></button>
+                                    <button class="timer-button" onclick={()=>deleteSave(item)} ><div class="icon delete-icon" /></button>
+                                </div>
+                            </div>
+                        {/each}
+                    </div>
+                {/if}
+            </div>
+        {/if}
 
 
         <!--Camera-->
@@ -416,6 +480,8 @@
             </div>
         {/if}
 
+
+
         <!--Info-->
         <div class:cameraSettings={!isElectron} class:infoPanel={isElectron} class="settingsPanel">
             <button onclick={toggleInfoPanel} class="timer-button" aria-label="Toggle info panel">
@@ -431,7 +497,7 @@
                      class="panelBody flex flex-col gap-1.5">
                     <div class="flex flex-row justify-between w-full items-center">
                         <p>Git repository(Instructions): </p>
-                        <a href="https://github.com/Pazzann/project-timer">here</a>
+                        <a target="_blank" href="https://github.com/Pazzann/project-timer">here</a>
                     </div>
                     <div class="flex flex-row justify-between w-full items-center">
                         <p>Version: </p>
@@ -439,12 +505,12 @@
                     </div>
                     <div class="flex flex-row justify-between w-full items-center">
                         <p>Developed by: </p>
-                        <a href="https://github.com/Pazzann">Anton Matiash</a>
+                        <a target="_blank" href="https://github.com/Pazzann">Anton Matiash</a>
                     </div>
                     <div class="flex flex-row justify-between w-full items-center">
                         <p>Special thanks: </p>
                         <div class="flex flex-col justify-between items-center">
-                            <p><a href="https://github.com/yegorvk">Egor Vaskonyan</a>(Camera)</p>
+                            <p><a target="_blank" href="https://github.com/yegorvk">Egor Vaskonyan</a>(Camera)</p>
 
                             <p>Svelte devs ❤️</p>
                         </div>
@@ -453,6 +519,7 @@
             {/if}
         </div>
 
+        <!--Main Body-->
         {#key settings}
             <input bind:value={settings.name} class="input-name text-center text-7xl" type="text"/>
 
@@ -551,6 +618,12 @@
 
     .infoPanel {
         right: 80px;
+    }
+    .savesPanel{
+        left: 80px;
+    }
+    .savesPanelBody{
+        left: -70px;
     }
 
     .cameraSettingsBody {

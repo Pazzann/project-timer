@@ -9,3 +9,4 @@ export default interface Settings {
     currentStageTime: number;
     showSettings: string[];
 }
+
