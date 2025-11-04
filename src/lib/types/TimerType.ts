@@ -1,0 +1,1 @@
+export type TimerType = "radial" | "number" | "linear";

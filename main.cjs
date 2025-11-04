@@ -23,8 +23,9 @@ let isCapturing = false;
 const createWindow = () => {
     console.log("Creating browser window...");
     mainWindow = new BrowserWindow({
-        width: 1280,
+        width: 900,
         height: 720,
+        resizable: false,
         webPreferences: {preload: path.join(__dirname, 'preload.js'), contextIsolation: true, backgroundThrottling: false}
     });
     console.log("Loading window content...");
@@ -44,6 +45,7 @@ const createWindow = () => {
 app.whenReady().then(() => {
     console.log("App ready, creating window...");
     createWindow();
+    mainWindow.setMenu(null);
     if (mainWindow) {
         mainWindow.webContents.once('did-finish-load', () => {
 

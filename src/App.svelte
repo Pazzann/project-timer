@@ -5,17 +5,27 @@
     import NumberTimer from "./lib/components/NumberTimer.svelte";
     import "./lib/styles/Button.css";
     import "./lib/styles/Icons.css";
+    import "./lib/styles/ColorInput.css";
+    import "./lib/styles/CheckBoxInput.css";
     import {MsToTime} from "./lib/functions/MsToTime";
     import {SortableList} from '@jhubbardsf/svelte-sortablejs';
-
     import {
-        fade,
         scale,
         fly
     } from 'svelte/transition';
     import StageInput from "./lib/components/StageInput.svelte";
     import type CameraSettings from "./lib/interfaces/CameraSettings";
+    import type {TimerType} from "./lib/types/TimerType";
 
+
+    // main variables
+    let isElectron: boolean = $state(false);
+    //@ts-ignore
+    if (window?.api && window?.api.isElectron) {
+        isElectron = true;
+    } else {
+        isElectron = false;
+    }
 
     let settings: Settings = $state({
         theme: {
@@ -39,13 +49,17 @@
     });
 
     let cameraSettings: CameraSettings = $state({
-        width: 1280,
+        width: 900,
         height: 720,
         fps: 30,
         enabled: false
     });
+    //
 
+    //Menu panels visibility
     let cameraSettingsVisible: boolean = $state(false);
+    let menuVisible: boolean = $state(false);
+    let infoVisible: boolean = $state(false);
 
     function toggleCameraSettings() {
         cameraSettingsVisible = !cameraSettingsVisible;
@@ -63,35 +77,100 @@
         }
     }
 
-    function changeCameraState() {
+    function toggleMenu() {
+        menuVisible = !menuVisible;
+        if (menuVisible) {
+            cameraSettingsVisible = false;
+            infoVisible = false;
+        }
+    }
+
+    // settings updates
+    //
+    let parseFieldValue: string = $state("");
+    let timerTypePresets: TimerType[] = ["radial", "linear", "number"];
+
+    function copy() {
+        navigator.clipboard.writeText(JSON.stringify(settings));
+    }
+
+    function parse() {
+        let parsedSettings: Settings = JSON.parse(parseFieldValue);
+        // settings.stages = parsedSettings.stages;
+
+        for (let i = 0; i < parsedSettings.stages.length; i++) {
+            parsedSettings.stages[i].index = i;
+        }
+        settings = parsedSettings;
+        parseFieldValue = "";
+        updateColor('--background-col', settings.theme.backgroundCol);
+        updateColor('--primary-col', settings.theme.primaryColor);
+        updateColor('--secondary-col', settings.theme.secondaryColor);
+        updateColor('--timer-background-col', settings.theme.timerSecondaryColor);
+        updateColor('--text-col', settings.theme.textColor);
 
     }
 
+    function updateColor(variable: string, value: string) {
+        document.documentElement.style.setProperty(variable, value);
+    }
+
+    // it's here because Idk why it doesn't work without it
+    let shiza = $state(0);
+
+    function deleteStage(index: number) {
+        settings.stages = settings.stages.filter((item) => item.index !== index);
+        for (let i = 0; i < settings.stages.length; i++) {
+            settings.stages[i].index = i;
+        }
+        if (settings.stages.length == 0) {
+            settings.stages.push({id: "Default", time: 15000, type: "allow-overlap", index: 0});
+            settings.activeStage = 0;
+        }
+        if (settings.activeStage >= settings.stages.length) {
+            settings.activeStage = settings.stages.length - 1;
+        }
+        shiza++;
+    }
+
+    //
+
+    function changeCameraState() {
+        //todo
+    }
+
+
+    //timer logic
+    //
 
     let progress: ReturnType<typeof setInterval> | null = $state(null);
-
-    let menuVisible: boolean = $state(false);
-
-    let infoVisible: boolean = $state(false);
-
     let deltaTime: number = $state(10000);
-
-    // progress = setInterval(() => {
-    //   settings.currentStageTime +=10;
-    // }, 10);
-
     let startTime: number = 0;
 
-    function onTimerButtonClick() {
+    function stopTimer() {
         if (progress) {
             clearInterval(progress);
             progress = null;
+        }
+    }
+
+    function onTimerButtonClick() {
+        if (progress) {
+            stopTimer();
         } else {
             startTime = Date.now();
             progress = setInterval(() => {
                 const now = Date.now();
                 settings.currentStageTime += now - startTime;
                 startTime = now;
+                if (settings.stages[settings.activeStage].type === "auto-new-stage" && settings.currentStageTime >= settings.stages[settings.activeStage].time) {
+                    if (settings.activeStage < settings.stages.length - 1) {
+                        settings.activeStage += 1;
+                        settings.currentStageTime = 0;
+                    } else {
+                        stopTimer();
+                    }
+                }
             }, 10);
         }
     }
@@ -124,54 +203,14 @@
 
     function changeTimerTime(dt: number) {
         settings.currentStageTime += dt;
+        if (settings.currentStageTime < 0) {
+            settings.currentStageTime = 0;
+        }
         startTime = Date.now();
     }
 
-    function toggleMenu() {
-        menuVisible = !menuVisible;
-        if (menuVisible) {
-            cameraSettingsVisible = false;
-            infoVisible = false;
-        }
-    }
+    //
 
-    function copy() {
-        navigator.clipboard.writeText(JSON.stringify(settings));
-    }
-
-    let parseFieldValue: string = $state("");
-
-    function parse() {
-        let parsedSettings: Settings = JSON.parse(parseFieldValue);
-        // settings.stages = parsedSettings.stages;
-
-        for (let i = 0; i < parsedSettings.stages.length; i++) {
-            parsedSettings.stages[i].index = i;
-        }
-        settings = parsedSettings;
-        parseFieldValue = "";
-        updateColor('--background-col', settings.theme.backgroundCol);
-        updateColor('--primary-col', settings.theme.primaryColor);
-        updateColor('--secondary-col', settings.theme.secondaryColor);
-        updateColor('--timer-background-col', settings.theme.timerSecondaryColor);
-        updateColor('--text-col', settings.theme.textColor);
-
-    }
-
-    function updateColor(variable: string, value: string) {
-        document.documentElement.style.setProperty(variable, value);
-    }
-
-    function deleteStage(index: number) {
-        settings.stages = settings.stages.filter((item) => item.index !== index);
-        for (let i = 0; i < settings.stages.length; i++) {
-            settings.stages[i].index = i;
-        }
-        shiza++;
-    }
-
-
-    let shiza = $state(0);
 
 </script>
 
@@ -181,7 +220,7 @@
         <!--Settings-->
         <div class="defaultSettings settingsPanel">
             {#key settings}
-                <button onclick={toggleMenu} class="timer-button">
+                <button onclick={toggleMenu} class="timer-button" aria-label="Toggle settings">
                     {#if menuVisible}
                         <div class="close-icon icon"/>
                     {:else}
@@ -189,10 +228,13 @@
                     {/if}
                 </button>
                 {#if menuVisible}
-                    <div transition:fly={{x: -200,  duration: 300}} class="settingsBody panelBody flex flex-col gap-1.5">
-                        <div class="flex flex-row justify-between w-full"><p> Stages: </p>
+                    <div transition:fly={{x: -200,  duration: 300}}
+                         class="settingsBody panelBody flex flex-col gap-1.5">
+                        <div class="flex flex-row justify-between w-full items-center">
+                            <p> Stages: </p>
                             <button onclick={()=>{settings.stages.push({id: "Default", time: 15000, type:"allow-overlap", index: settings.stages.length})}}
-                                    class="timer-button"><div class="icon add-icon"/>
+                                    class="timer-button" aria-label="Add stage">
+                                <div class="icon add-icon"/>
                             </button>
                         </div>
                         <div class="stages-panel flex flex-col overflow-scroll">
@@ -225,124 +267,158 @@
                             {/key}
                         </div>
 
-                        <div class="flex flex-row gap-1.5">
-                            h:
-                            <input type="checkbox" bind:group={settings.showSettings} value="h"/>
-                            m:
-                            <input type="checkbox" bind:group={settings.showSettings} value="m"/>
-                            s:
-                            <input type="checkbox" bind:group={settings.showSettings} value="s"/>
-                            ms:
-                            <input type="checkbox" bind:group={settings.showSettings} value="ms"/>
+                        <div class="flex flex-row justify-between w-full items-center">
+                            <p>Display time:</p>
+                            <div class="flex flex-row gap-1.5 items-center justify-center">
+                                h:
+                                <input class="custom-checkbox" type="checkbox" bind:group={settings.showSettings}
+                                       value="h"/>
+                                m:
+                                <input class="custom-checkbox" type="checkbox" bind:group={settings.showSettings}
+                                       value="m"/>
+                                s:
+                                <input class="custom-checkbox" type="checkbox" bind:group={settings.showSettings}
+                                       value="s"/>
+                                ms:
+                                <input class="custom-checkbox" type="checkbox" bind:group={settings.showSettings}
+                                       value="ms"/>
+                            </div>
                         </div>
 
-                        <div class="flex">
-                            <input
-                                    type="color"
-                                    bind:value={settings.theme.backgroundCol}
-                                    oninput={() => updateColor('--background-col', settings.theme.backgroundCol)}
-                            />
+                        <div class="flex flex-row w-full justify-between items-center">
+                            <p>Timer type:</p>
+                            <select bind:value={settings.theme.timerType}>
+                                {#each timerTypePresets as preset}
+                                    <option value={preset}>
+                                        {preset}
+                                    </option>
+                                {/each}
+                            </select>
+                        </div>
 
-                            <input
-                                    type="color"
-                                    bind:value={settings.theme.primaryColor}
-                                    oninput={() => updateColor('--primary-col', settings.theme.primaryColor)}
-                            />
+                        <div class="flex flex-row w-full justify-between items-center">
+                            <p>Colors:</p>
+                            <div class="flex flex-row gap-1.5">
+                                <input
+                                        class="custom-color-input"
+                                        type="color"
+                                        bind:value={settings.theme.backgroundCol}
+                                        oninput={() => updateColor('--background-col', settings.theme.backgroundCol)}
+                                />
+
+                                <input
+                                        class="custom-color-input"
+                                        type="color"
+                                        bind:value={settings.theme.primaryColor}
+                                        oninput={() => updateColor('--primary-col', settings.theme.primaryColor)}
+                                />
 
 
-                            <input
-                                    type="color"
-                                    bind:value={settings.theme.secondaryColor}
-                                    oninput={() => updateColor('--secondary-col', settings.theme.secondaryColor)}
-                            />
-                            <input
-                                    type="color"
-                                    bind:value={settings.theme.timerSecondaryColor}
-                                    oninput={() => updateColor('--timer-background-col', settings.theme.timerSecondaryColor)}
-                            />
-                            <input
-                                    type="color"
-                                    bind:value={settings.theme.textColor}
-                                    oninput={() => updateColor('--text-col', settings.theme.textColor)}
-                            />
+                                <input
+                                        class="custom-color-input"
+                                        type="color"
+                                        bind:value={settings.theme.secondaryColor}
+                                        oninput={() => updateColor('--secondary-col', settings.theme.secondaryColor)}
+                                />
+                                <input
+                                        class="custom-color-input"
+                                        type="color"
+                                        bind:value={settings.theme.timerSecondaryColor}
+                                        oninput={() => updateColor('--timer-background-col', settings.theme.timerSecondaryColor)}
+                                />
+                                <input
+                                        class="custom-color-input"
+                                        type="color"
+                                        bind:value={settings.theme.textColor}
+                                        oninput={() => updateColor('--text-col', settings.theme.textColor)}
+                                />
 
+                            </div>
                         </div>
 
 
-                        <div>Preset:</div>
-                        <input class="parse-in" type="text" bind:value={parseFieldValue}
-                               placeholder="parse preset here"/>
-                        <div class="flex flex-row">
-                            <button onclick={copy} class="timer-button">Copy</button>
-                            <button onclick={parse} class="timer-button">Parse</button>
+                        <div class="flex flex-row gap-1.5 justify-between w-full items-center">
+                            <div>Preset:</div>
+                            <input class="parse-in w-full" type="text" bind:value={parseFieldValue}
+                                   placeholder="parse preset here"/>
+                            <div class="flex flex-row gap-3 justify-between">
+                                <button onclick={copy} class="timer-button">Copy</button>
+                                <button onclick={parse} class="timer-button">Parse</button>
+                            </div>
                         </div>
+
 
                     </div>
                 {/if}
             {/key}
         </div>
+
 
         <!--Camera-->
-        <div class="cameraSettings settingsPanel">
-            {#key cameraSettings}
-                <button onclick={toggleCameraSettings} class="timer-button">
+        {#if isElectron}
+            <div class="cameraSettings settingsPanel">
+                {#key cameraSettings}
+                    <button onclick={toggleCameraSettings} class="timer-button" aria-label="Toggle camera settings">
+                        {#if cameraSettingsVisible}
+                            <div class="close-icon icon"/>
+                        {:else}
+                            <div class="camera-icon icon"/>
+                        {/if}
+                    </button>
                     {#if cameraSettingsVisible}
-                        <div class="close-icon icon"/>
-                    {:else}
-                        <div class="camera-icon icon"/>
+                        <div transition:fly={{x: 200,  duration: 300}}
+                             class="cameraSettingsBody panelBody flex flex-col gap-1.5">
+                            <p> Camera Settings: </p>
+
+
+                            <div class="flex flex-row gap-1.5 justify-between w-full">
+                                <div>Width:</div>
+                                <input class="parse-in" type="number" bind:value={cameraSettings.width}
+                                       placeholder="width"/>
+                            </div>
+
+                            <div class="flex flex-row gap-1.5 justify-between w-full">
+                                <div>Height:</div>
+                                <input class="parse-in" type="number" bind:value={cameraSettings.height}
+                                       placeholder="height"/>
+                            </div>
+                            <div class="flex flex-row gap-1.5 justify-between w-full">
+                                <div>fps:</div>
+                                <input class="parse-in" type="number" bind:value={cameraSettings.fps}
+                                       placeholder="FPS"/>
+                            </div>
+
+
+                            <div class="flex flex-row justify-between gap-1.5 w-full">
+                                <p>Camera:</p>
+                                <p>
+                                    {#if cameraSettings.enabled}
+                                        Working!
+                                    {:else}
+                                        Disabled!
+                                    {/if}
+                                </p>
+                            </div>
+
+                            <div class="flex flex-row">
+                                <button onclick={changeCameraState} class="timer-button">
+                                    {#if cameraSettings.enabled}
+                                        Disable
+                                    {:else}
+                                        Enable
+                                    {/if}
+                                </button>
+                            </div>
+
+                        </div>
                     {/if}
-                </button>
-                {#if cameraSettingsVisible}
-                    <div transition:fly={{x: 200,  duration: 300}}
-                         class="cameraSettingsBody panelBody flex flex-col gap-1.5">
-                        <p> Camera Settings: </p>
-
-
-                        <div class="flex flex-row gap-1.5 justify-between">
-                            <div>Width:</div>
-                            <input class="parse-in" type="number" bind:value={cameraSettings.width}
-                                   placeholder="width"/>
-                        </div>
-
-                        <div class="flex flex-row gap-1.5 justify-between">
-                            <div>Height:</div>
-                            <input class="parse-in" type="number" bind:value={cameraSettings.height}
-                                   placeholder="height"/>
-                        </div>
-                        <div class="flex flex-row gap-1.5 justify-between">
-                            <div>fps:</div>
-                            <input class="parse-in" type="number" bind:value={cameraSettings.fps}
-                                   placeholder="fps"/>
-                        </div>
-
-
-                        <div class="flex flex-row gap-1.5">
-                            Camera Enabled:
-                            {#if cameraSettings.enabled}
-                                Camera Is Working!
-                            {:else}
-                                Camera Is Disabled!
-                            {/if}
-                        </div>
-
-                        <div class="flex flex-row">
-                            <button onclick={changeCameraState} class="timer-button">
-                                {#if cameraSettings.enabled}
-                                    Disable
-                                {:else}
-                                    Enable
-                                {/if}
-                            </button>
-                        </div>
-
-                    </div>
-                {/if}
-            {/key}
-        </div>
+                {/key}
+            </div>
+        {/if}
 
         <!--Info-->
-        <div class="settingsPanel infoPanel">
-            <button onclick={toggleInfoPanel} class="timer-button">
+        <div class:cameraSettings={!isElectron} class:infoPanel={isElectron} class="settingsPanel">
+            <button onclick={toggleInfoPanel} class="timer-button" aria-label="Toggle info panel">
                 {#if infoVisible}
                     <div class="close-icon icon"/>
                 {:else}
@@ -351,9 +427,28 @@
             </button>
             {#if infoVisible}
                 <div transition:fly={{x: 200,  duration: 300}}
-                     class="infoSettingsBody panelBody flex flex-col gap-1.5">
-                    La la la
-                    developed by Anton Matiash)
+                     class:cameraSettingsBody={!isElectron} class:infoSettingsBody={isElectron}
+                     class="panelBody flex flex-col gap-1.5">
+                    <div class="flex flex-row justify-between w-full items-center">
+                        <p>Git repository(Instructions): </p>
+                        <a href="https://github.com/Pazzann/project-timer">here</a>
+                    </div>
+                    <div class="flex flex-row justify-between w-full items-center">
+                        <p>Version: </p>
+                        <p>1.0.0</p>
+                    </div>
+                    <div class="flex flex-row justify-between w-full items-center">
+                        <p>Developed by: </p>
+                        <a href="https://github.com/Pazzann">Anton Matiash</a>
+                    </div>
+                    <div class="flex flex-row justify-between w-full items-center">
+                        <p>Special thanks: </p>
+                        <div class="flex flex-col justify-between items-center">
+                            <p><a href="https://github.com/yegorvk">Egor Vaskonyan</a>(Camera)</p>
+
+                            <p>Svelte devs ❤️</p>
+                        </div>
+                    </div>
                 </div>
             {/if}
         </div>
@@ -366,9 +461,9 @@
                     {#if settings.theme.timerType === "radial"}
                         <RadialTimer settings={settings}></RadialTimer>
                     {:else if settings.theme.timerType === "linear"}
-                        <LinearTimer></LinearTimer>
-                    {:else}
-                        <NumberTimer></NumberTimer>
+                        <LinearTimer settings={settings}></LinearTimer>
+                    {:else if settings.theme.timerType === "number"}
+                        <NumberTimer settings={settings}></NumberTimer>
                     {/if}
 
                     <div class="stages-body flex flex-col justify-center content-center gap-1.5">
@@ -397,13 +492,21 @@
                     <button onclick={onResetButtonClick} class="timer-button">{"Reset"}</button>
                     <button onclick={onFullResetButtonClick} class="timer-button">{"Full reset"}</button>
                     <div class="flex">
-                        <button onclick={()=>changeTimerStage(-1)} class="timer-button">{"<<"}</button>
-                        <button onclick={()=>changeTimerStage(1)} class="timer-button">{">>"}</button>
+                        <button onclick={()=>changeTimerStage(-1)} class="timer-button">
+                            <div class="icon left-arrow-icon"/>
+                        </button>
+                        <button onclick={()=>changeTimerStage(1)} class="timer-button">
+                            <div class="icon right-arrow-icon"/>
+                        </button>
                     </div>
                     <div class="flex">
                         <input class="delta-input text-4xl" type="number" bind:value={deltaTime}/>
-                        <button onclick={()=>changeTimerTime(deltaTime)} class="timer-button">{"▲"}</button>
-                        <button onclick={()=>changeTimerTime(-deltaTime)} class="timer-button">{"▼"}</button>
+                        <button onclick={()=>changeTimerTime(deltaTime)} class="timer-button">
+                            <div class="icon plus-icon"/>
+                        </button>
+                        <button onclick={()=>changeTimerTime(-deltaTime)} class="timer-button">
+                            <div class="icon minus-icon"/>
+                        </button>
                     </div>
                 </nav>
 
@@ -421,8 +524,10 @@
     }
 
     .stages-panel {
-        max-height: 300px;
-
+        max-height: 200px;
+        scrollbar-width: thin;
+        scrollbar-color: var(--secondary-col) var(--primary-col);
+        overflow-x: hidden;
     }
 
     nav {
@@ -452,11 +557,12 @@
         right: 0;
     }
 
-    .infoSettingsBody{
+    .infoSettingsBody {
         right: -70px;
+        width: 450px;
     }
 
-    .settingsBody{
+    .settingsBody {
         left: 0;
     }
 
@@ -476,9 +582,17 @@
         border-radius: 8px;
         text-align: center;
         font-size: 23px;
-        padding: 20px;
+        padding: 10px;
 
         top: 70px;
+    }
+
+    a {
+        color: var(--timer-background-col);
+    }
+
+    a:hover {
+        color: var(--secondary-col);
     }
 
     .delta-input {
@@ -497,7 +611,7 @@
         gap: 40px;
         scrollbar-width: none;
 
-        overflow: hidden;
+        overflow: visible;
     }
 
     main::-webkit-scrollbar {
@@ -533,5 +647,18 @@
         background: var(--primary-col);
         border: 5px solid var(--secondary-col);
         border-radius: 10px;
+    }
+
+
+
+    select {
+        font-size: 18px;
+        padding: 5px;
+        border-radius: 10px;
+        width: 120px;
+        /* Add your theme colors */
+        background: var(--primary-col);
+        color: var(--text-col);
+        border: 5px solid var(--secondary-col);
     }
 </style>

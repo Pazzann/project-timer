@@ -1,0 +1,75 @@
+/* --- Custom Checkbox Styles --- */
+
+/* Give your checkbox input this class */
+.custom-checkbox {
+    /* 1. Hide the default browser checkbox */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    outline: none;
+
+    /* 2. Define the new box's size and alignment */
+    width: 25px;
+    height: 25px;
+    vertical-align: middle; /* Helps align it with text */
+    position: relative;     /* Needed to position the checkmark */
+
+    /* 3. Style it to match your theme */
+    background: var(--primary-col);
+    border: 3px solid var(--secondary-col);
+    border-radius: 4px; /* Slightly less round than buttons */
+    cursor: pointer;
+
+    /* 4. Add transitions */
+    transition: all 150ms ease-out;
+}
+
+/* 5. Create the checkmark using ::after */
+.custom-checkbox::after {
+    content: '';
+    position: absolute;
+    display: none; /* Hide it by default */
+
+    /* Position the checkmark (tweak as needed) */
+    left: 8px;
+    top: 3px;
+
+    /* Create the checkmark shape (a rotated 'L') */
+    width: 6px;
+    height: 12px;
+    border: solid var(--text-col); /* Checkmark color */
+    border-width: 0 3px 3px 0; /* Creates the 'L' */
+
+    /* Rotate it */
+    transform: rotate(45deg);
+}
+
+/* --- States --- */
+
+/* Show the checkmark when the box is checked */
+.custom-checkbox:checked::after {
+    display: block;
+}
+
+/* Change background when checked (like in your screenshot) */
+.custom-checkbox:checked {
+    background: var(--secondary-col);
+    border-color: var(--secondary-col);
+}
+
+/* Hover state (matches button hover) */
+.custom-checkbox:not([disabled]):hover {
+    background: var(--secondary-col);
+}
+
+/* Focus state (matches button focus) */
+.custom-checkbox:not([disabled]):focus {
+    outline: none;
+    border: 3px dashed var(--secondary-col);
+}
+
+/* Disabled state */
+.custom-checkbox:disabled {
+    cursor: default;
+    opacity: 0.6;
+}

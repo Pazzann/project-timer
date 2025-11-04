@@ -1,15 +1,15 @@
 
 .timer-button {
     outline: none;
-    align-items: center;
     background: var(--primary-col);
     border: 5px solid var(--secondary-col);
     border-radius: 8px;
     color: var(--text-col);
-    text-align: center;
     font-size: 36px;
     transition: all 320ms;
-    padding: 5px;
+    padding:  4px;
+    display: grid;
+    place-items: center;
 }
 .timer-button:not([disabled]):hover {
     outline: none;

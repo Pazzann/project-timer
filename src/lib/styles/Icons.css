@@ -38,3 +38,23 @@
     -webkit-mask-image: url("public/delete-2.svg");
     mask-image: url("public/delete-2.svg");
 }
+
+
+.plus-icon{
+    -webkit-mask-image: url("public/plus.svg");
+    mask-image: url("public/plus.svg");
+}
+.minus-icon{
+    -webkit-mask-image: url("public/minus.svg");
+    mask-image: url("public/minus.svg");
+}
+
+
+.left-arrow-icon{
+    -webkit-mask-image: url("public/left-arrow.svg");
+    mask-image: url("public/left-arrow.svg");
+}
+.right-arrow-icon{
+    -webkit-mask-image: url("public/right-arrow.svg");
+    mask-image: url("public/right-arrow.svg");
+}

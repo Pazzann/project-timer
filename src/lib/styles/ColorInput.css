@@ -1,0 +1,46 @@
+.custom-color-input {
+    /* Reset browser default appearance */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    /* Make the input element itself transparent */
+    background-color: transparent;
+
+    /* Set a fixed size for the clickable area */
+    width: 30px;
+    height: 30px;
+
+    /* Remove default borders */
+    border: none;
+    padding: 0;
+
+    /* Add spacing between swatches */
+    margin: 0 4px;
+
+    /* Show a pointer on hover */
+    cursor: pointer;
+}
+
+/* --- WebKit Browsers (Chrome, Safari, Edge) --- */
+
+/* Remove padding from the wrapper */
+.custom-color-input::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+/* Style the actual color swatch */
+.custom-color-input::-webkit-color-swatch {
+    /* Add a border similar to the image's UI */
+    border: 5px solid var(--secondary-col);
+    /* Add a slight border-radius */
+    border-radius: 3px;
+}
+
+/* --- Firefox --- */
+
+/* Style the actual color swatch */
+.custom-color-input::-moz-color-swatch {
+    border: 5px solid var(--secondary-col);
+    border-radius: 3px;
+}
