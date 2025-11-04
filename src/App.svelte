@@ -36,9 +36,14 @@
     if (window?.api && window?.api.isElectron) {
         isElectron = true;
         readSaves();
-        if(files.length > 0){
+        if(files.includes("last_close.json")){
+            loadSave("last_close.json");
+        } else if(files.length > 0){
             loadSave(files[files.length - 1]);
         }
+        window.addEventListener('beforeunload', (event) => {
+            makeSave("last_close");
+        });
     } else {
         isElectron = false;
     }
@@ -61,8 +66,8 @@
         readSaves();
     }
 
-    function makeSave(){
-        let fileName = settings.name.split(" ").join("_") + ".json";
+    function makeSave(saveName=settings.name){
+        let fileName = saveName.split(" ").join("_") + ".json";
         window.api.fs.writeFile(fileName, JSON.stringify(settings));
         readSaves();
     }
@@ -401,8 +406,11 @@
                     <div transition:fly={{x: -200,  duration: 300}}
                          class="savesPanelBody panelBody flex flex-col gap-1.5">
 
-                        <button class="timer-button" onclick={makeSave}><div class="icon saves-icon" /></button>
-                        <p> Saves panel is under development... </p>
+                        <div class="flex flex-row justify-between w-full items-center">
+                            <p> Save current: </p>
+                            <button class="timer-button" onclick={makeSave}><div class="icon saves-icon" /></button>
+                        </div>
+
                         {#each files as item}
                             <div class="flex flex-row justify-between w-full items-center">
                                 <p>{item.split(".json").join("")}</p>
