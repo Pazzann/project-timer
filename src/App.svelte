@@ -17,6 +17,8 @@
     import type CameraSettings from "./lib/interfaces/CameraSettings";
     import type {TimerType} from "./lib/types/TimerType";
     import {getDefaultSettings} from "./lib/functions/getDefaultSettings";
+    import type ColorTheme from "./lib/interfaces/ColorTheme";
+    import {getColorThemes} from "./lib/functions/getColorThemes";
 
 
     // main variables
@@ -79,6 +81,12 @@
     let menuVisible: boolean = $state(false);
     let infoVisible: boolean = $state(false);
     let savesVisible: boolean = $state(false);
+    let gradientsVisible: boolean = $state(false);
+
+
+    function toggleGradientsPanel() {
+        gradientsVisible = !gradientsVisible;
+    }
 
     function toggleSavesPanel() {
         savesVisible = !savesVisible;
@@ -86,6 +94,7 @@
             menuVisible = false;
             cameraSettingsVisible = false;
             infoVisible = false;
+            gradientsVisible = false;
         }
     }
 
@@ -95,6 +104,7 @@
             menuVisible = false;
             infoVisible = false;
             savesVisible = false;
+            gradientsVisible = false;
         }
     }
 
@@ -104,6 +114,7 @@
             menuVisible = false;
             cameraSettingsVisible = false;
             savesVisible = false;
+            gradientsVisible = false;
         }
     }
 
@@ -113,6 +124,7 @@
             cameraSettingsVisible = false;
             infoVisible = false;
             savesVisible = false;
+            gradientsVisible = false;
         }
     }
 
@@ -127,7 +139,6 @@
 
     function parse(value: string = parseFieldValue) {
         let parsedSettings: Settings = JSON.parse(value);
-        // settings.stages = parsedSettings.stages;
 
         for (let i = 0; i < parsedSettings.stages.length; i++) {
             parsedSettings.stages[i].index = i;
@@ -138,6 +149,7 @@
         updateColor('--secondary-col', settings.theme.secondaryColor);
         updateColor('--timer-background-col', settings.theme.timerSecondaryColor);
         updateColor('--text-col', settings.theme.textColor);
+        updateColor('--font-family', settings.theme.fontFamily);
 
     }
 
@@ -165,6 +177,19 @@
 
     function setToDefault(){
         parse(JSON.stringify(getDefaultSettings()));
+    }
+
+    function setColorTheme(colorTheme: ColorTheme){
+        settings.theme.backgroundCol = colorTheme.backgroundCol;
+        settings.theme.primaryColor = colorTheme.primaryColor;
+        settings.theme.secondaryColor = colorTheme.secondaryColor;
+        settings.theme.timerSecondaryColor = colorTheme.timerSecondaryColor;
+        settings.theme.textColor = colorTheme.textColor;
+        updateColor('--background-col', settings.theme.backgroundCol);
+        updateColor('--primary-col', settings.theme.primaryColor);
+        updateColor('--secondary-col', settings.theme.secondaryColor);
+        updateColor('--timer-background-col', settings.theme.timerSecondaryColor);
+        updateColor('--text-col', settings.theme.textColor);
     }
 
     //
@@ -332,8 +357,23 @@
 
                         <div class="flex flex-row w-full justify-between items-center">
                             <p>Colors: </p>
-                            <div class="flex flex-row items-center">
-                                <button class="timer-button"><div class="palette-icon icon"/></button>
+                            <div class="flex flex-row items-center relative">
+                                <button onclick={toggleGradientsPanel} class="timer-button"><div class="palette-icon icon"/></button>
+                                    {#if gradientsVisible === true}
+                                        <div class="gradientPanel">
+                                            {#each getColorThemes() as colorTheme}
+                                                <div class="flex flex-row justify-between items-center mb-2">
+                                                    <div>{colorTheme.name}</div>
+                                                    <button class="timer-button" onclick={()=>setColorTheme(colorTheme)}>
+                                                        <div class="icon select-icon"/>
+                                                    </button>
+                                                </div>
+                                            {/each}
+
+                                        </div>
+                                    {/if}
+
+
                                 <div>or</div>
                                 <input
                                         class="custom-color-input"
@@ -372,6 +412,11 @@
                             </div>
                         </div>
 
+                        <div class="flex flex-row gap-1.5 justify-between w-full items-center">
+                            <div>Font:</div>
+                            <input oninput={()=>{updateColor('--font-family', settings.theme.fontFamily);}} class="parse-in w-full" type="text" bind:value={settings.theme.fontFamily}
+                                   placeholder="font family"/>
+                        </div>
 
                         <div class="flex flex-row gap-1.5 justify-between w-full items-center">
                             <div>Preset:</div>
@@ -379,7 +424,7 @@
                                    placeholder="parse preset here"/>
                             <div class="flex flex-row gap-3 justify-between">
                                 <button onclick={copy} class="timer-button"><div class="icon copy-icon"/></button>
-                                <button onclick={()=>{parse(); parseFieldValue="";}} class="timer-button"><div class="icon paste-icon"/></button>
+                                <button onclick={()=>{parse(); parseFieldValue="";}} class="timer-button"><div class="icon select-icon"/></button>
                                 <button onclick={setToDefault} class="timer-button"><div class="icon reset-icon"/></button>
                             </div>
                         </div>
@@ -408,7 +453,7 @@
 
                         <div class="flex flex-row justify-between w-full items-center">
                             <p> Save current: </p>
-                            <button class="timer-button" onclick={makeSave}><div class="icon saves-icon" /></button>
+                            <button class="timer-button" onclick={()=>{makeSave()}}><div class="icon saves-icon" /></button>
                         </div>
 
                         {#each files as item}
@@ -563,9 +608,13 @@
                     </div>
                 </div>
                 <nav class="flex flex-row">
-                    <button onclick={onTimerButtonClick} class="timer-button">{progress ? "Pause" : "Start"}</button>
-                    <button onclick={onResetButtonClick} class="timer-button">{"Reset"}</button>
-                    <button onclick={onFullResetButtonClick} class="timer-button">{"Full reset"}</button>
+                    <button onclick={onTimerButtonClick} class="timer-button">{#if progress}
+                        <div class="icon pause-icon"/>
+                    {:else}
+                        <div class="icon play-icon"/>
+                    {/if} </button>
+                    <button onclick={onResetButtonClick} class="timer-button"><div class="icon reset-icon"/></button>
+                    <button onclick={onFullResetButtonClick} class="timer-button"><div class="icon full-reset-icon"/></button>
                     <div class="flex">
                         <button onclick={()=>changeTimerStage(-1)} class="timer-button">
                             <div class="icon left-arrow-icon"/>
@@ -600,12 +649,11 @@
 
     .stages-panel {
         max-height: 200px;
-        scrollbar-width: thin;
-        scrollbar-color: var(--secondary-col) var(--primary-col);
         overflow-x: hidden;
     }
 
     nav {
+        margin-top: 30px;
         display: flex;
         justify-content: center;
         gap: 10px;
@@ -651,6 +699,21 @@
         z-index: 10;
         position: absolute;
         top: 10px;
+    }
+
+    .gradientPanel{
+        position: absolute;
+        left: 60px;
+        width: 200px;
+        height: 200px;
+        background: var(--primary-col);
+        border: 5px solid var(--secondary-col);
+        border-radius: 8px;
+        text-align: center;
+        font-size: 23px;
+        padding: 10px;
+        z-index: 20;
+        overflow: auto;
     }
 
     .panelBody {
@@ -701,7 +764,7 @@
 
     .sel-stage {
         overflow-wrap: break-word;
-        font-family: Segoe UI, sans-serif;
+        font-family: var(--font-family), sans-serif;
     }
 
     .stage-first-line {

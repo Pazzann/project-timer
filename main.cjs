@@ -37,7 +37,7 @@ const createWindow = () => {
             contextIsolation: true,
             backgroundThrottling: false,
             sandbox: false
-        }
+        },
     });
     console.log("Loading window content...");
     if (process.env.VITE_DEV_SERVER_URL) {
@@ -79,4 +79,3 @@ app.on('will-quit', async (event) => {
 app.on('quit', () => {
     console.log("App quit.");
 });
-

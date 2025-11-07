@@ -88,3 +88,21 @@
     -webkit-mask-image: url("public/load-circle.svg");
     mask-image: url("public/load-circle.svg");
 }
+.select-icon{
+    -webkit-mask-image: url("public/select.svg");
+    mask-image: url("public/select.svg");
+}
+
+.play-icon{
+    -webkit-mask-image: url("public/play.svg");
+    mask-image: url("public/play.svg");
+}
+.pause-icon{
+    -webkit-mask-image: url("public/pause.svg");
+    mask-image: url("public/pause.svg");
+}
+
+.full-reset-icon{
+    -webkit-mask-image: url("public/reset-full.svg");
+    mask-image: url("public/reset-full.svg");
+}

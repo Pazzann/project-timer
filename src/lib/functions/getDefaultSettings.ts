@@ -7,7 +7,8 @@ const defaultSettings: Settings = {
         secondaryColor: "#03346E",
         timerSecondaryColor: "#6EACDA",
         textColor: "#E2E2B6",
-        timerType: "radial"
+        timerType: "radial",
+        fontFamily: "Segoe UI"
     },
     name: "Default Timer",
     stages: [
@@ -18,7 +19,7 @@ const defaultSettings: Settings = {
     ],
     showSettings: ["h", "m", "s", "ms"],
     currentStageTime: 0,
-    activeStage: 2
+    activeStage: 0
 }
 
 export function getDefaultSettings() {

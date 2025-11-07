@@ -7,4 +7,7 @@ export default interface Theme {
     timerSecondaryColor: string;
     textColor: string;
     timerType: TimerType;
+    //fontsize
+    fontFamily: string;
+
 }
