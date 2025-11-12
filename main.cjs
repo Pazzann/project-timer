@@ -3,9 +3,10 @@ const {app, BrowserWindow, screen, ipcMain} = require('electron');
 const path = require('path');
 const {spawn} = require('child_process');
 const fs = require('fs');
+const {Camera} = require("@yegorvk/node-vcam")
 
 // --- Configuration ---
-const CAM_FPS = 30;
+const CAM_FPS = 120;
 
 let currentInputWidth = 0;
 let currentInputHeight = 0;
@@ -31,36 +32,8 @@ async function test(){
 
 let mainPort; // We will store the port from the renderer here
 
+const camera = new Camera(1920, 1080);
 
-
-
-
-// Listen for the MessageChannel port
-ipcMain.on('setup-shared-memory', (event) => {
-    // The port is in event.ports[0]
-    mainPort = event.ports[0];
-
-    // Now, the main process can "talk" to the renderer
-    // and listen for messages on this port
-    mainPort.on('message', (event) => {
-        // This is where you will receive the SharedArrayBuffer
-        const sharedBuffer = event.data;
-
-        // Create a Uint8Array view on the *same* memory
-        const uint8View = new Uint8Array(sharedBuffer);
-
-        console.log('MAIN: Received SharedArrayBuffer');
-
-        // Let's modify the buffer to prove it's shared
-        // Write "123" to the first byte
-        console.log(`MAIN: Value before write: ${uint8View[0]}`);
-        uint8View[0] = 123;
-        console.log(`MAIN: Wrote 123 to index 0. Value is now: ${uint8View[0]}`);
-    });
-
-    // Start the port
-    mainPort.start();
-});
 
 
 
@@ -103,13 +76,19 @@ const createWindow = () => {
     mainWindow.webContents.on('did-fail-load', (e, code, desc, url) => console.error(`Window content failed to load: ${desc} (Code: ${code}) URL: ${url}`));
     mainWindow.webContents.on('did-finish-load', () => console.log("Window content finished loading."));
 };
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
     console.log("App ready, creating window...");
     createWindow();
-    //mainWindow.setMenu(null);
+    mainWindow.setMenu(null);
     if (mainWindow) {
-        mainWindow.webContents.once('did-finish-load', () => {
+        camera.start();
 
+
+        mainWindow.webContents.once('did-finish-load', async () => {
+            const image = await mainWindow.webContents.capturePage();
+            console.log("Captured initial image size:", image.getSize());
+            camera.resize(image.getSize().width, image.getSize().height);
+            captureInterval = setInterval(async ()=>{camera.send(flipImageVertically(swapRedAndBlue((await mainWindow.webContents.capturePage()).toBitmap()),image.getSize().width,image.getSize().height))}, 1000 / CAM_FPS)
         });
     } else {
         console.error("Main window not created.");
@@ -120,6 +99,46 @@ app.whenReady().then(() => {
     });
 });
 
+function swapRedAndBlue(buffer) {
+    for (let i = 0; i < buffer.length; i += 4) {
+        // Get the B and R values
+        const b = buffer[i];
+        const r = buffer[i + 2];
+
+        // Swap them
+        buffer[i] = r;     // Set Blue position to Red value
+        buffer[i + 2] = b; // Set Red position to Blue value
+
+        // G (buffer[i + 1]) and A (buffer[i + 3]) remain unchanged
+
+    }
+    return buffer;
+}
+
+function flipImageVertically(buffer, width, height) {
+    // Allocate memory for the new, flipped buffer
+    const flippedBuffer = Buffer.alloc(buffer.length);
+
+    // Calculate the 'stride', which is the number of bytes per row
+    const stride = width * 4; // 4 bytes per pixel
+
+    // Loop through each row of the original image
+    for (let y = 0; y < height; y++) {
+        const srcRow = y;
+        const destRow = height - 1 - y; // The corresponding row in the new buffer
+
+        // Calculate the start of each row in bytes
+        const srcOffset = srcRow * stride;
+        const destOffset = destRow * stride;
+
+        // Copy the entire row from source to destination
+        buffer.copy(flippedBuffer, destOffset, srcOffset, srcOffset + stride);
+    }
+
+    return flippedBuffer;
+}
+
+
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit();
 });
@@ -127,5 +146,9 @@ app.on('will-quit', async (event) => {
     event.preventDefault();
 });
 app.on('quit', () => {
+
+    if (captureInterval)
+        clearInterval(captureInterval);
+    camera.stop();
     console.log("App quit.");
 });

@@ -196,48 +196,6 @@
 
     //camera logic
 
-    async function runSharedMemoryTest() {
-        if (typeof SharedArrayBuffer === 'undefined') {
-            alert('SharedArrayBuffer is not available. Check security headers!');
-            return;
-        }
-
-        // 1. Create the MessageChannel in the RENDERER
-        const { port1, port2 } = new MessageChannel();
-
-        // 2. Send port2 to the main process via the preload script
-        // (This part was correct)
-        window.api.sendPortToMain(port2);
-
-        // 3. Create the SharedArrayBuffer
-        const sharedBuffer = new SharedArrayBuffer(1024);
-        const uint8View = new Uint8Array(sharedBuffer);
-        console.log(`RENDERER: Initial value at index 0: ${uint8View[0]}`);
-
-        // 4. --- THIS IS THE FIX ---
-        // Send the sharedBuffer as the *message*, not in the transfer list.
-        // This is your line 210.
-        port1.postMessage(sharedBuffer);
-        // --- END OF FIX ---
-
-        // 5. Wait to let the main process write to it
-        setTimeout(() => {
-            console.log('RENDERER: Checking value after 1 second...');
-            const valueFromMain = uint8View[0];
-
-            console.log(`RENDERER: Value at index 0 is now: ${valueFromMain}`);
-            if (valueFromMain === 123) {
-                console.log('SUCCESS! Memory is truly shared.');
-            }
-        }, 1000);
-
-        port1.onmessage = (event) => {
-            console.log('RENDERER: Received message from main:', event.data);
-        };
-        port1.start();
-    }
-
-    runSharedMemoryTest();
 
 
 

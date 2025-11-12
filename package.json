@@ -30,6 +30,7 @@
     "vite": "^5.4.9"
   },
   "dependencies": {
+    "@yegorvk/node-vcam": "https://github.com/yegorvk/node-vcam",
     "electron": "^39.0.0",
     "electron-builder": "^26.0.12"
   },
