@@ -18,6 +18,7 @@ declare global {
         isElectron: true;
         fs: SafeFs;
         fsBaseName: string;
+        sendPortToMain(MessagePort): void;
     }
 
     interface Window {

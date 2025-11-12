@@ -1,5 +1,5 @@
 // preload.cjs
-const { contextBridge } = require('electron');
+const { contextBridge, ipcRenderer } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
@@ -82,7 +82,11 @@ contextBridge.exposeInMainWorld('api', {
     isElectron: true,
     fs: safeFs,
     // Expose the base name so the renderer can show where saves are stored without leaking the full path
-    fsBaseName: 'saves'
+    fsBaseName: 'saves',
+    sendPortToMain: (port) => {
+        // Send this port to the main process
+        ipcRenderer.postMessage('setup-shared-memory', null, [port]);
+    }
 });
 
 // Note: we do NOT attach fs to window directly to avoid untrusted code getting full node fs access
