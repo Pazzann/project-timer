@@ -47,6 +47,7 @@ const createWindow = () => {
             backgroundThrottling: false,
             sandbox: false
         },
+        //icon: path.join(__dirname, 'timerLogo.ico')
     });
 
     mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {

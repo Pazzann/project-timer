@@ -22,7 +22,6 @@
     "electron": "^39.0.0",
     "electron-builder": "^26.0.12",
     "electron-rebuild": "^3.2.9",
-    "electron-squirrel-startup": "^1.0.1",
     "postcss": "^8.4.49",
     "svelte": "^5.0.3",
     "svelte-check": "^4.0.5",
@@ -33,15 +32,19 @@
     "vite-plugin-singlefile": "^2.3.0"
   },
   "dependencies": {
+    "electron-squirrel-startup": "^1.0.1",
     "@yegorvk/node-vcam": "https://github.com/yegorvk/node-vcam"
   },
   "build": {
-    "appId": "com.my-svelte-app.app",
-    "productName": "My Svelte App",
+    "appId": "com.project-timer.app",
+    "productName": "Project Timer",
+    "win": {
+      "icon": "timerLogo.ico"
+    },
     "files": [
       "dist/**/*",
-      "electron.js",
-      "preload.js"
+      "main.cjs",
+      "preload.cjs"
     ],
     "directories": {
       "output": "release"
