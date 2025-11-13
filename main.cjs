@@ -1,12 +1,12 @@
 // electron.js / main.cjs
-const {app, BrowserWindow, screen, ipcMain} = require('electron');
+const {app, BrowserWindow, screen, ipcMain,shell} = require('electron');
 const path = require('path');
 const {spawn} = require('child_process');
 const fs = require('fs');
 const {Camera} = require("@yegorvk/node-vcam")
 
 // --- Configuration ---
-const CAM_FPS = 30;
+let CAM_FPS = 30;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -15,19 +15,52 @@ if (require('electron-squirrel-startup')) {
 
 let mainWindow;
 let captureInterval;
-let isCapturing = false;
+
+
+const userDataPath = app.getPath('userData');
+const savesPath = path.join(userDataPath, 'saves');
+
+ipcMain.on('get-saves-path', (event) => {
+    event.returnValue = savesPath;
+});
+
+ipcMain.handle('open-saves-folder', async () => {
+    // shell.openPath is the command that opens the folder in Explorer/Finder
+    await shell.openPath(savesPath);
+});
+
+function stopCamera() {
+    camera.stop();
+    if (captureInterval)
+        clearInterval(captureInterval);
+}
+async function startCamera() {
+    camera.start();
+    const image = await mainWindow.webContents.capturePage();
+    camera.resize(image.getSize().width, image.getSize().height);
+    captureInterval = setInterval(async ()=>{camera.send(flipImageVertically(swapRedAndBlue((await mainWindow.webContents.capturePage()).toBitmap()),image.getSize().width,image.getSize().height))}, 1000 / CAM_FPS)
+}
+
+ipcMain.on('stop-camera', async () => {
+    stopCamera();
+})
+
+ipcMain.on('start-camera', async () => {
+   startCamera();
+})
+
+ipcMain.on('change-fps', async (event, fps) => {
+    stopCamera();
+    CAM_FPS = fps;
+    startCamera();
+})
 
 
 // Ensure "saves" directory exists
-if (!fs.existsSync(path.join(__dirname, "saves")))
-    fs.mkdirSync(path.join(__dirname, "saves"));
+if (!fs.existsSync(savesPath))
+    fs.mkdirSync(savesPath);
 
 
-async function test(){
-    const image = await mainWindow.webContents.capturePage(captureRect);
-}
-
-let mainPort; // We will store the port from the renderer here
 
 const camera = new Camera(1920, 1080);
 
@@ -47,7 +80,7 @@ const createWindow = () => {
             backgroundThrottling: false,
             sandbox: false
         },
-        //icon: path.join(__dirname, 'timerLogo.ico')
+        icon: path.join(__dirname, 'ProjectTimerLogo.ico')
     });
 
     mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
@@ -79,14 +112,10 @@ app.whenReady().then(async () => {
     createWindow();
     mainWindow.setMenu(null);
     if (mainWindow) {
-        camera.start();
-
-
         mainWindow.webContents.once('did-finish-load', async () => {
             const image = await mainWindow.webContents.capturePage();
             console.log("Captured initial image size:", image.getSize());
             camera.resize(image.getSize().width, image.getSize().height);
-            captureInterval = setInterval(async ()=>{camera.send(flipImageVertically(swapRedAndBlue((await mainWindow.webContents.capturePage()).toBitmap()),image.getSize().width,image.getSize().height))}, 1000 / CAM_FPS)
         });
     } else {
         console.error("Main window not created.");
@@ -144,9 +173,6 @@ app.on('will-quit', async (event) => {
     event.preventDefault();
 });
 app.on('quit', () => {
-
-    if (captureInterval)
-        clearInterval(captureInterval);
-    camera.stop();
-    console.log("App quit.");
+    stopCamera();
+    app.quit();
 });

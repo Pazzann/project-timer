@@ -4,6 +4,11 @@
   "version": "1.0.0",
   "type": "module",
   "main": "main.cjs",
+  "author": {
+    "name": "Anton Matiash",
+    "email": "manton2007@gmail.com",
+    "url": "https://github.com/Pazzann"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -39,7 +44,7 @@
     "appId": "com.project-timer.app",
     "productName": "Project Timer",
     "win": {
-      "icon": "timerLogo.ico"
+      "icon": "ProjectTimerLogo.ico"
     },
     "files": [
       "dist/**/*",

@@ -21,15 +21,12 @@
     import {getColorThemes} from "./lib/functions/getColorThemes";
 
 
-    import TimerLogo from "./lib/icons/timerLogo.svg";
+    import TimerLogo from "./lib/icons/ProjectTimerLogo.png";
 
     // main variables
     let settings: Settings = $state(getDefaultSettings());
 
-    let cameraSettings: CameraSettings = $state({
-        fps: 30,
-        enabled: false
-    });
+
 
 
     let isElectron: boolean = $state(false);
@@ -72,6 +69,10 @@
         let fileName = saveName.split(" ").join("_") + ".json";
         window.api.fs.writeFile(fileName, JSON.stringify(settings));
         readSaves();
+    }
+
+    function openSaveFolder(){
+        window.api.openSaves();
     }
 
     //
@@ -196,11 +197,23 @@
 
     //camera logic
 
+    let cameraSettings: CameraSettings = $state({
+        fps: 30,
+        enabled: false
+    });
 
-
+    function changeFPS(){
+        window.api.changeFps(cameraSettings.fps);
+    }
 
     function changeCameraState() {
-        //todo
+        if(cameraSettings.enabled){
+            window.api.stopCamera();
+            cameraSettings.enabled = false;
+        } else {
+            window.api.startCamera();
+            cameraSettings.enabled = true;
+        }
     }
 
 
@@ -460,9 +473,10 @@
                     <div transition:fly={{x: -200,  duration: 300}}
                          class="savesPanelBody panelBody flex flex-col gap-1.5">
 
-                        <div class="flex flex-row justify-between w-full items-center">
+                        <div class="flex flex-row justify-between w-full items-center gap-1.5">
                             <p> Save current: </p>
                             <button class="timer-button" onclick={()=>{makeSave()}}><div class="icon saves-icon" /></button>
+                            <button class="timer-button" onclick={()=>{openSaveFolder()}}><div class="icon folder-icon" /></button>
                         </div>
 
                         {#each files as item}
@@ -501,19 +515,9 @@
                                 <div>fps:</div>
                                 <input class="parse-in" type="number" bind:value={cameraSettings.fps}
                                        placeholder="FPS"/>
+                                <button onclick={changeFPS} class="timer-button"><div class="icon select-icon"></div> </button>
                             </div>
 
-
-                            <div class="flex flex-row justify-between gap-1.5 w-full">
-                                <p>Camera:</p>
-                                <p>
-                                    {#if cameraSettings.enabled}
-                                        Working!
-                                    {:else}
-                                        Disabled!
-                                    {/if}
-                                </p>
-                            </div>
 
                             <div class="flex flex-row">
                                 <button onclick={changeCameraState} class="timer-button">

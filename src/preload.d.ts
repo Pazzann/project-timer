@@ -19,6 +19,10 @@ declare global {
         fs: SafeFs;
         fsBaseName: string;
         sendPortToMain(MessagePort): void;
+        openSaves(): void;
+        startCamera: () => void;
+        stopCamera: () => void;
+        changeFps: (newFPS: number) => void;
     }
 
     interface Window {

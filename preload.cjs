@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 
 // Restrict filesystem access to the project's `saves` directory
-const allowedBase = path.resolve(__dirname, 'saves');
+const allowedBase = ipcRenderer.sendSync('get-saves-path');
 
 function normalizeAndEnsureInside(base, userPath) {
     // Resolve relative to the allowed base to prevent path traversal
@@ -83,7 +83,10 @@ contextBridge.exposeInMainWorld('api', {
     fs: safeFs,
     // Expose the base name so the renderer can show where saves are stored without leaking the full path
     fsBaseName: 'saves',
-
+    openSaves: () => ipcRenderer.invoke('open-saves-folder'),
+    startCamera: () => ipcRenderer.send('start-camera'),
+    stopCamera: () => ipcRenderer.send('stop-camera'),
+    changeFps: (fps) => ipcRenderer.send('change-fps', fps)
 });
 
 // Note: we do NOT attach fs to window directly to avoid untrusted code getting full node fs access

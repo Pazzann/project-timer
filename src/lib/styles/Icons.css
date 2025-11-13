@@ -106,3 +106,8 @@
     -webkit-mask-image: url("../icons/reset-full.svg");
     mask-image: url("../icons/reset-full.svg");
 }
+
+.folder-icon{
+    -webkit-mask-image: url("../icons/folder.svg");
+    mask-image: url("../icons/folder.svg");
+}
