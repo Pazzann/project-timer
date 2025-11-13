@@ -21,12 +21,12 @@
     import {getColorThemes} from "./lib/functions/getColorThemes";
 
 
+    import TimerLogo from "./lib/icons/timerLogo.svg";
+
     // main variables
     let settings: Settings = $state(getDefaultSettings());
 
     let cameraSettings: CameraSettings = $state({
-        width: 900,
-        height: 720,
         fps: 30,
         enabled: false
     });
@@ -278,6 +278,10 @@
 
 </script>
 
+<svelte:head>
+    <link rel="icon" href={TimerLogo} />
+</svelte:head>
+
 <main>
     <div class="main-body">
 
@@ -493,17 +497,6 @@
                             <p> Camera Settings: </p>
 
 
-                            <div class="flex flex-row gap-1.5 justify-between w-full">
-                                <div>Width:</div>
-                                <input class="parse-in" type="number" bind:value={cameraSettings.width}
-                                       placeholder="width"/>
-                            </div>
-
-                            <div class="flex flex-row gap-1.5 justify-between w-full">
-                                <div>Height:</div>
-                                <input class="parse-in" type="number" bind:value={cameraSettings.height}
-                                       placeholder="height"/>
-                            </div>
                             <div class="flex flex-row gap-1.5 justify-between w-full">
                                 <div>fps:</div>
                                 <input class="parse-in" type="number" bind:value={cameraSettings.fps}

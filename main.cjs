@@ -6,10 +6,7 @@ const fs = require('fs');
 const {Camera} = require("@yegorvk/node-vcam")
 
 // --- Configuration ---
-const CAM_FPS = 120;
-
-let currentInputWidth = 0;
-let currentInputHeight = 0;
+const CAM_FPS = 30;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {

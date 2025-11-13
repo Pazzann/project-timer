@@ -10,99 +10,99 @@
     mask-repeat: no-repeat;
 }
 .camera-icon {
-    -webkit-mask-image: url("public/camera-front.svg");
-    mask-image: url("public/camera-front.svg");
+    -webkit-mask-image: url("../icons/camera-front.svg");
+    mask-image: url("../icons/camera-front.svg");
 }
 
 .close-icon {
-    -webkit-mask-image: url("public/close-circle.svg");
-    mask-image: url("public/close-circle.svg");
+    -webkit-mask-image: url("../icons/close-circle.svg");
+    mask-image: url("../icons/close-circle.svg");
 }
 
 .info-icon {
-    -webkit-mask-image: url("public/info-circle.svg");
-    mask-image: url("public/info-circle.svg");
+    -webkit-mask-image: url("../icons/info-circle.svg");
+    mask-image: url("../icons/info-circle.svg");
 }
 
 .settings-icon {
-    -webkit-mask-image: url("public/settings-2.svg");
-    mask-image: url("public/settings-2.svg");
+    -webkit-mask-image: url("../icons/settings-2.svg");
+    mask-image: url("../icons/settings-2.svg");
 }
 
 .add-icon{
-    -webkit-mask-image: url("public/add-ellipse.svg");
-    mask-image: url("public/add-ellipse.svg");
+    -webkit-mask-image: url("../icons/add-ellipse.svg");
+    mask-image: url("../icons/add-ellipse.svg");
 }
 
 .delete-icon{
-    -webkit-mask-image: url("public/delete-2.svg");
-    mask-image: url("public/delete-2.svg");
+    -webkit-mask-image: url("../icons/delete-2.svg");
+    mask-image: url("../icons/delete-2.svg");
 }
 
 
 .plus-icon{
-    -webkit-mask-image: url("public/plus.svg");
-    mask-image: url("public/plus.svg");
+    -webkit-mask-image: url("../icons/plus.svg");
+    mask-image: url("../icons/plus.svg");
 }
 .minus-icon{
-    -webkit-mask-image: url("public/minus.svg");
-    mask-image: url("public/minus.svg");
+    -webkit-mask-image: url("../icons/minus.svg");
+    mask-image: url("../icons/minus.svg");
 }
 
 
 .left-arrow-icon{
-    -webkit-mask-image: url("public/left-arrow.svg");
-    mask-image: url("public/left-arrow.svg");
+    -webkit-mask-image: url("../icons/left-arrow.svg");
+    mask-image: url("../icons/left-arrow.svg");
 }
 .right-arrow-icon{
-    -webkit-mask-image: url("public/right-arrow.svg");
-    mask-image: url("public/right-arrow.svg");
+    -webkit-mask-image: url("../icons/right-arrow.svg");
+    mask-image: url("../icons/right-arrow.svg");
 }
 
 .saves-icon{
-    -webkit-mask-image: url("public/save.svg");
-    mask-image: url("public/save.svg");
+    -webkit-mask-image: url("../icons/save.svg");
+    mask-image: url("../icons/save.svg");
 }
 
 .palette-icon{
-    -webkit-mask-image: url("public/palette.svg");
-    mask-image: url("public/palette.svg");
+    -webkit-mask-image: url("../icons/palette.svg");
+    mask-image: url("../icons/palette.svg");
 }
 
 .copy-icon{
-    -webkit-mask-image: url("public/copy.svg");
-    mask-image: url("public/copy.svg");
+    -webkit-mask-image: url("../icons/copy.svg");
+    mask-image: url("../icons/copy.svg");
 }
 
 .paste-icon{
-    -webkit-mask-image: url("public/paste.svg");
-    mask-image: url("public/paste.svg");
+    -webkit-mask-image: url("../icons/paste.svg");
+    mask-image: url("../icons/paste.svg");
 }
 
 .reset-icon{
-    -webkit-mask-image: url("public/reset.svg");
-    mask-image: url("public/reset.svg");
+    -webkit-mask-image: url("../icons/reset.svg");
+    mask-image: url("../icons/reset.svg");
 }
 
 .load-icon{
-    -webkit-mask-image: url("public/load-circle.svg");
-    mask-image: url("public/load-circle.svg");
+    -webkit-mask-image: url("../icons/load-circle.svg");
+    mask-image: url("../icons/load-circle.svg");
 }
 .select-icon{
-    -webkit-mask-image: url("public/select.svg");
-    mask-image: url("public/select.svg");
+    -webkit-mask-image: url("../icons/select.svg");
+    mask-image: url("../icons/select.svg");
 }
 
 .play-icon{
-    -webkit-mask-image: url("public/play.svg");
-    mask-image: url("public/play.svg");
+    -webkit-mask-image: url("../icons/play.svg");
+    mask-image: url("../icons/play.svg");
 }
 .pause-icon{
-    -webkit-mask-image: url("public/pause.svg");
-    mask-image: url("public/pause.svg");
+    -webkit-mask-image: url("../icons/pause.svg");
+    mask-image: url("../icons/pause.svg");
 }
 
 .full-reset-icon{
-    -webkit-mask-image: url("public/reset-full.svg");
-    mask-image: url("public/reset-full.svg");
+    -webkit-mask-image: url("../icons/reset-full.svg");
+    mask-image: url("../icons/reset-full.svg");
 }
