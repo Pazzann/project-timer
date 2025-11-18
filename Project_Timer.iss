@@ -3,8 +3,8 @@
 ; Non-commercial use only
 
 #define MyAppName "Project Timer"
-#define MyAppVersion "1.0"
-#define MyAppExeName "Project Timer Setup 1.0.0.exe"
+#define MyAppVersion "1.0.0"
+#define MyAppExeName "Project Timer.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -13,7 +13,7 @@ AppId={{9E423CB5-15C4-46B9-8D24-75E013E0D370}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
-DefaultDirName={autopf}\{#MyAppName}
+DefaultDirName={autopf}\{#MyAppName}\{#MyAppVersion}
 UninstallDisplayIcon={app}\{#MyAppExeName}
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
@@ -25,7 +25,7 @@ WizardStyle=modern dynamic
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: ".\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\Release\win-unpacked\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
 Source: ".\UnityCaptureFilter64.dll"; DestDir: "{app}"; Flags: regserver sharedfile
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
