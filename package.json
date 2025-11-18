@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.1",
-    "@yegorvk/node-vcam": "https://github.com/yegorvk/node-vcam"
+    "@yegorvk/node-vcam": "0.1.0-beta.1"
   },
   "build": {
     "appId": "com.project-timer.app",
