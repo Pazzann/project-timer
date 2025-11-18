@@ -3,7 +3,7 @@ const {app, BrowserWindow, screen, ipcMain,shell} = require('electron');
 const path = require('path');
 const {spawn} = require('child_process');
 const fs = require('fs');
-const {Camera} = require("@yegorvk/node-vcam")
+const {VirtualCamera, ImageFormat, Backend} = require("@yegorvk/node-vcam")
 
 // --- Configuration ---
 let CAM_FPS = 30;
@@ -15,7 +15,6 @@ if (require('electron-squirrel-startup')) {
 
 let mainWindow;
 let captureInterval;
-
 
 const userDataPath = app.getPath('userData');
 const savesPath = path.join(userDataPath, 'saves');
@@ -36,9 +35,24 @@ function stopCamera() {
 }
 async function startCamera() {
     camera.start();
-    const image = await mainWindow.webContents.capturePage();
-    camera.resize(image.getSize().width, image.getSize().height);
-    captureInterval = setInterval(async ()=>{camera.send(flipImageVertically(swapRedAndBlue((await mainWindow.webContents.capturePage()).toBitmap()),image.getSize().width,image.getSize().height))}, 1000 / CAM_FPS)
+
+    captureInterval = setInterval(async () => {
+        if (!mainWindow || !mainWindow.webContents)
+            return;
+
+        const image = await mainWindow.webContents.capturePage();
+        const bitmap = image.toBitmap();
+
+        const size = image.getSize();
+
+        const width = size.width;
+        const height = size.height;
+
+        swapRedAndBlue(bitmap);
+        const flipped = flipImageVertically(bitmap, width, height);
+        
+        camera.send(width, height, ImageFormat.Rgba8Linear, flipped);
+    }, 1000.0 / CAM_FPS);
 }
 
 ipcMain.on('stop-camera', async () => {
@@ -50,9 +64,9 @@ ipcMain.on('start-camera', async () => {
 })
 
 ipcMain.on('change-fps', async (event, fps) => {
-    stopCamera();
+    //stopCamera();
     CAM_FPS = fps;
-    startCamera();
+    //startCamera();
 })
 
 
@@ -60,12 +74,7 @@ ipcMain.on('change-fps', async (event, fps) => {
 if (!fs.existsSync(savesPath))
     fs.mkdirSync(savesPath);
 
-
-
-const camera = new Camera(1920, 1080);
-
-
-
+const camera = new VirtualCamera(Backend.UnityCapture);
 
 // --- Electron App Lifecycle (remains the same) ---
 const createWindow = () => {
@@ -82,6 +91,8 @@ const createWindow = () => {
         },
         icon: path.join(__dirname, 'ProjectTimerLogo.ico')
     });
+
+    //mainWindow.webContents.openDevTools();
 
     mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
         callback({
@@ -107,16 +118,17 @@ const createWindow = () => {
     mainWindow.webContents.on('did-fail-load', (e, code, desc, url) => console.error(`Window content failed to load: ${desc} (Code: ${code}) URL: ${url}`));
     mainWindow.webContents.on('did-finish-load', () => console.log("Window content finished loading."));
 };
+
 app.whenReady().then(async () => {
     console.log("App ready, creating window...");
     createWindow();
     mainWindow.setMenu(null);
     if (mainWindow) {
-        mainWindow.webContents.once('did-finish-load', async () => {
-            const image = await mainWindow.webContents.capturePage();
-            console.log("Captured initial image size:", image.getSize());
-            camera.resize(image.getSize().width, image.getSize().height);
-        });
+        // mainWindow.webContents.once('did-finish-load', async () => {
+        //     const image = await mainWindow.webContents.capturePage();
+        //     console.log("Captured initial image size:", image.getSize());
+        //     camera.resize(image.getSize().width, image.getSize().height);
+        // });
     } else {
         console.error("Main window not created.");
         app.quit();
@@ -165,13 +177,14 @@ function flipImageVertically(buffer, width, height) {
     return flippedBuffer;
 }
 
-
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit();
 });
-app.on('will-quit', async (event) => {
-    event.preventDefault();
-});
+
+// app.on('will-quit', async (event) => {
+//     event.preventDefault();
+// });
+
 app.on('quit', () => {
     stopCamera();
     app.quit();
