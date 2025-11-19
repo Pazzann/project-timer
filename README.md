@@ -2,7 +2,7 @@
 
 # ⏱️ Timer with Stages
 
-<img src="https://jumpshare.com/share/UqtSM55G3stBNXhi7jYi" alt="Banner" width="100%"/>
+<img src="https://cdn.discordapp.com/attachments/541691734833496084/1440510142012719124/Project_Timer_P7kOjKIAr7.gif?ex=691e6b1d&is=691d199d&hm=4a6ddfcdb776bd6d26148042abedb706cccd7ea1a5282a96735ab654fd2d6030&" alt="Banner" width="100%"/>
 
 ![Svelte](https://img.shields.io/badge/Made_with-Svelte-ff3e00?style=for-the-badge&logo=svelte)
 ![Electron](https://img.shields.io/badge/Build-Electron-47848F?style=for-the-badge&logo=electron)
@@ -57,3 +57,16 @@ Grab the [latest release here](https://github.com/Pazzann/project-timer/releases
 ```bash
 yarn
 yarn build
+```
+
+### 2. Windows Exe Build
+*Prerequisite: Install [Inno Setup](https://jrsoftware.org/isdl.php) first.*
+
+1. Run the build command:
+   ```bash
+   yarn electron:build
+   ```
+2. Open the **Inno Setup** app.
+3. Load the script from the main folder.
+4. Press **Compile**.
+5. Find your setup file in the `Output` folder.
