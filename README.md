@@ -2,7 +2,7 @@
 
 # ⏱️ Timer with Stages
 
-<img src="https://cdn.discordapp.com/attachments/541691734833496084/1440510142012719124/Project_Timer_P7kOjKIAr7.gif?ex=691e6b1d&is=691d199d&hm=4a6ddfcdb776bd6d26148042abedb706cccd7ea1a5282a96735ab654fd2d6030&" alt="Banner" width="100%"/>
+<img src="https://cdn.discordapp.com/attachments/541691734833496084/1440510142012719124/Project_Timer_P7kOjKIAr7.gif?ex=691e6b1d&is=691d199d&hm=4a6ddfcdb776bd6d26148042abedb706cccd7ea1a5282a96735ab654fd2d6030&" alt="Banner" width="40%"/>
 
 ![Svelte](https://img.shields.io/badge/Made_with-Svelte-ff3e00?style=for-the-badge&logo=svelte)
 ![Electron](https://img.shields.io/badge/Build-Electron-47848F?style=for-the-badge&logo=electron)
