@@ -14,6 +14,7 @@ Supports virtual camera output, local file saving (Windows), or runs directly in
 
 [**Download Latest Release**](https://github.com/Pazzann/project-timer/releases)
 
+[**Online access**](https://pazzann.github.io/project-timer/)
 </div>
 
 ---
