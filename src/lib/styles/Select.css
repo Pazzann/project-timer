@@ -4,3 +4,43 @@
     border-radius: 10px;
     width: 120px;
 }
+
+.timer-select-minimal{
+    font-size: 18px;
+    padding: 5px;
+    border-radius: 4px;
+    width: 120px;
+}
+
+.timer-select-material{
+    font-size: 18px;
+    padding: 5px;
+    border-radius: 12px;
+    width: 120px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.timer-select-glass{
+    font-size: 18px;
+    padding: 5px;
+    border-radius: 8px;
+    width: 120px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.timer-select-neumorphism{
+    font-size: 18px;
+    padding: 5px;
+    border-radius: 8px;
+    width: 120px;
+    box-shadow: inset 2px 2px 5px rgba(0,0,0,0.25), inset -1px -1px 4px rgba(255,255,255,0.05);
+}
+
+.timer-select-retro{
+    font-size: 18px;
+    padding: 5px;
+    border-radius: 0;
+    width: 120px;
+    font-family: 'Courier New', Courier, monospace;
+}

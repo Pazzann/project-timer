@@ -6,6 +6,6 @@ export default interface Theme {
     timerType: TimerType;
     //fontsize
     fontFamily: string;
-    buttonStyle: "default" | "minimal" | "custom";
+    buttonStyle: "default" | "minimal" | "material" | "glass" | "neumorphism" | "retro";
     iconPack: "default" | "colorful" | "minimal";
 }

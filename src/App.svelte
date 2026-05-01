@@ -447,6 +447,18 @@
                             </div>
                         </div>
 
+                        <div class="flex flex-row w-full justify-between items-center">
+                            <p>Style: </p>
+                            <select class={"timer-select-" + settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} bind:value={settings.theme.buttonStyle}>
+                                <option value="default">Default</option>
+                                <option value="minimal">Minimal</option>
+                                <option value="material">Material</option>
+                                <option value="glass">Glass</option>
+                                <option value="neumorphism">Soft UI</option>
+                                <option value="retro">Retro</option>
+                            </select>
+                        </div>
+
                         <div class="flex flex-row gap-1.5 justify-between w-full items-center">
                             <div>Font:</div>
                             <input oninput={()=>{updateColor('--font-family', settings.theme.fontFamily);}} class={"w-full timer-input-" + settings.theme.buttonStyle+ " timer-common-" + settings.theme.buttonStyle} type="text" bind:value={settings.theme.fontFamily}
