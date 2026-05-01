@@ -7,3 +7,23 @@
     background: transparent;
     border: none;
 }
+
+.timer-common-material{
+    background: var(--primary-col);
+    border: none;
+}
+
+.timer-common-glass{
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.18);
+}
+
+.timer-common-neumorphism{
+    background: var(--primary-col);
+    border: none;
+}
+
+.timer-common-retro{
+    background: transparent;
+    border: 1px solid var(--text-col);
+}

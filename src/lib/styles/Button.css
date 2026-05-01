@@ -28,3 +28,156 @@
     cursor: default;
     color: var(--text-col);
 }
+
+/* --- Minimal --- */
+.timer-button-minimal {
+    outline: none;
+    border-radius: 4px;
+    color: var(--text-col);
+    font-size: 36px;
+    transition: all 150ms;
+    padding: 4px;
+    display: grid;
+    place-items: center;
+}
+.timer-button-minimal:not([disabled]):hover {
+    background: var(--secondary-col) !important;
+    cursor: pointer;
+}
+.timer-button-minimal:not([disabled]):focus {
+    outline: 2px solid var(--text-col);
+    outline-offset: 2px;
+}
+.timer-button-minimal:disabled {
+    cursor: default;
+    opacity: 0.5;
+}
+
+/* --- Material --- */
+.timer-button-material {
+    outline: none;
+    border-radius: 24px;
+    color: var(--text-col);
+    font-size: 36px;
+    transition: all 200ms cubic-bezier(0.2, 0, 0, 1);
+    padding: 4px;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+}
+.timer-button-material:not([disabled]):hover {
+    background: var(--secondary-col) !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.35), 0 2px 4px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transform: scale(1.05);
+}
+.timer-button-material:not([disabled]):focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--timer-background-col);
+}
+.timer-button-material:not([disabled]):active {
+    background: var(--secondary-col) !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    transform: scale(0.98);
+}
+.timer-button-material:disabled {
+    cursor: default;
+    opacity: 0.5;
+}
+
+/* --- Glass --- */
+.timer-button-glass {
+    outline: none;
+    border-radius: 12px;
+    color: var(--text-col);
+    font-size: 36px;
+    transition: all 200ms;
+    padding: 4px;
+    display: grid;
+    place-items: center;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+}
+.timer-button-glass:not([disabled]):hover {
+    background: rgba(255,255,255,0.16) !important;
+    border-color: rgba(255,255,255,0.35) !important;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+    cursor: pointer;
+    transform: scale(1.05);
+}
+.timer-button-glass:not([disabled]):focus {
+    outline: none;
+    border-color: rgba(255,255,255,0.5) !important;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.25), 0 4px 16px rgba(0,0,0,0.25);
+}
+.timer-button-glass:not([disabled]):active {
+    background: rgba(255,255,255,0.14) !important;
+    transform: scale(1.02);
+}
+.timer-button-glass:disabled {
+    cursor: default;
+    opacity: 0.5;
+}
+
+/* --- Neumorphism --- */
+.timer-button-neumorphism {
+    outline: none;
+    border-radius: 12px;
+    color: var(--text-col);
+    font-size: 36px;
+    transition: all 200ms;
+    padding: 4px;
+    display: grid;
+    place-items: center;
+    box-shadow: 5px 5px 10px rgba(0,0,0,0.35), -3px -3px 8px rgba(255,255,255,0.06);
+}
+.timer-button-neumorphism:not([disabled]):hover {
+    background: var(--secondary-col) !important;
+    box-shadow: 7px 7px 14px rgba(0,0,0,0.4), -4px -4px 10px rgba(255,255,255,0.08);
+    cursor: pointer;
+}
+.timer-button-neumorphism:not([disabled]):focus {
+    outline: none;
+    box-shadow: 5px 5px 10px rgba(0,0,0,0.35), -3px -3px 8px rgba(255,255,255,0.06), 0 0 0 2px var(--secondary-col);
+}
+.timer-button-neumorphism:not([disabled]):active {
+    box-shadow: inset 3px 3px 6px rgba(0,0,0,0.35), inset -2px -2px 5px rgba(255,255,255,0.05);
+}
+.timer-button-neumorphism:disabled {
+    cursor: default;
+    opacity: 0.5;
+}
+
+/* --- Retro --- */
+.timer-button-retro {
+    outline: none;
+    border-radius: 0;
+    color: var(--text-col);
+    font-size: 36px;
+    transition: all 150ms;
+    padding: 4px;
+    display: grid;
+    place-items: center;
+    text-shadow: 0 0 8px var(--text-col);
+    box-shadow: 0 0 4px var(--text-col);
+}
+.timer-button-retro:not([disabled]):hover {
+    background: var(--text-col) !important;
+    border-color: var(--text-col) !important;
+    color: var(--background-col);
+    text-shadow: none;
+    box-shadow: 0 0 12px var(--text-col);
+    cursor: pointer;
+}
+.timer-button-retro:not([disabled]):focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--text-col), 0 0 8px var(--text-col);
+}
+.timer-button-retro:not([disabled]):active {
+    background: var(--secondary-col) !important;
+}
+.timer-button-retro:disabled {
+    cursor: default;
+    opacity: 0.5;
+}

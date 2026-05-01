@@ -71,3 +71,139 @@
     cursor: default;
     opacity: 0.6;
 }
+
+/* --- Shared checkbox base (all non-default variants inherit these) --- */
+.timer-checkbox-minimal,
+.timer-checkbox-material,
+.timer-checkbox-glass,
+.timer-checkbox-neumorphism,
+.timer-checkbox-retro {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    outline: none;
+    width: 25px;
+    height: 25px;
+    vertical-align: middle;
+    position: relative;
+    cursor: pointer;
+    transition: all 150ms ease-out;
+}
+
+.timer-checkbox-minimal::after,
+.timer-checkbox-material::after,
+.timer-checkbox-glass::after,
+.timer-checkbox-neumorphism::after,
+.timer-checkbox-retro::after {
+    content: '';
+    position: absolute;
+    display: none;
+    left: 8px;
+    top: 3px;
+    width: 6px;
+    height: 12px;
+    border: solid var(--text-col);
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+}
+
+.timer-checkbox-minimal:checked::after,
+.timer-checkbox-material:checked::after,
+.timer-checkbox-glass:checked::after,
+.timer-checkbox-neumorphism:checked::after,
+.timer-checkbox-retro:checked::after {
+    display: block;
+}
+
+/* --- Minimal --- */
+.timer-checkbox-minimal {
+    border-radius: 2px;
+}
+.timer-checkbox-minimal:checked {
+    background: var(--secondary-col) !important;
+}
+.timer-checkbox-minimal:not([disabled]):hover {
+    background: var(--secondary-col) !important;
+}
+.timer-checkbox-minimal:not([disabled]):focus {
+    outline: 2px solid var(--text-col);
+    outline-offset: 2px;
+}
+.timer-checkbox-minimal:disabled { cursor: default; opacity: 0.5; }
+
+/* --- Material --- */
+.timer-checkbox-material {
+    border-radius: 6px;
+}
+.timer-checkbox-material:checked {
+    background: var(--secondary-col) !important;
+}
+.timer-checkbox-material:not([disabled]):hover {
+    background: var(--secondary-col) !important;
+}
+.timer-checkbox-material:not([disabled]):focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--timer-background-col);
+}
+.timer-checkbox-material:disabled { cursor: default; opacity: 0.5; }
+
+/* --- Glass --- */
+.timer-checkbox-glass {
+    border-radius: 6px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+.timer-checkbox-glass:checked {
+    background: rgba(255,255,255,0.25) !important;
+    border-color: rgba(255,255,255,0.5) !important;
+}
+.timer-checkbox-glass:not([disabled]):hover {
+    background: rgba(255,255,255,0.18) !important;
+    border-color: rgba(255,255,255,0.4) !important;
+}
+.timer-checkbox-glass:not([disabled]):focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.3);
+}
+.timer-checkbox-glass:disabled { cursor: default; opacity: 0.5; }
+
+/* --- Neumorphism --- */
+.timer-checkbox-neumorphism {
+    border-radius: 6px;
+    box-shadow: 3px 3px 6px rgba(0,0,0,0.3), -2px -2px 5px rgba(255,255,255,0.06);
+}
+.timer-checkbox-neumorphism:checked {
+    background: var(--secondary-col) !important;
+    box-shadow: inset 2px 2px 4px rgba(0,0,0,0.3), inset -1px -1px 3px rgba(255,255,255,0.05);
+}
+.timer-checkbox-neumorphism:not([disabled]):hover {
+    background: var(--secondary-col) !important;
+}
+.timer-checkbox-neumorphism:not([disabled]):focus {
+    outline: none;
+    box-shadow: 3px 3px 6px rgba(0,0,0,0.3), -2px -2px 5px rgba(255,255,255,0.06), 0 0 0 2px var(--secondary-col);
+}
+.timer-checkbox-neumorphism:disabled { cursor: default; opacity: 0.5; }
+
+/* --- Retro --- */
+.timer-checkbox-retro {
+    border-radius: 0;
+    box-shadow: 0 0 4px var(--text-col);
+}
+.timer-checkbox-retro::after {
+    border-color: var(--background-col);
+}
+.timer-checkbox-retro:checked {
+    background: var(--text-col) !important;
+    border-color: var(--text-col) !important;
+    box-shadow: 0 0 8px var(--text-col);
+}
+.timer-checkbox-retro:not([disabled]):hover {
+    background: var(--secondary-col) !important;
+    box-shadow: 0 0 8px var(--text-col);
+}
+.timer-checkbox-retro:not([disabled]):focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--text-col), 0 0 8px var(--text-col);
+}
+.timer-checkbox-retro:disabled { cursor: default; opacity: 0.5; }

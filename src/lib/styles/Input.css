@@ -1,3 +1,28 @@
 .timer-input-default{
     border-radius: 10px;
 }
+
+.timer-input-minimal{
+    border-radius: 4px;
+}
+
+.timer-input-material{
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.timer-input-glass{
+    border-radius: 8px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.timer-input-neumorphism{
+    border-radius: 8px;
+    box-shadow: inset 2px 2px 5px rgba(0,0,0,0.25), inset -1px -1px 4px rgba(255,255,255,0.05);
+}
+
+.timer-input-retro{
+    border-radius: 0;
+    font-family: 'Courier New', Courier, monospace;
+}
