@@ -1,0 +1,41 @@
+.timer-panel-default {
+    background: var(--primary-col);
+    border: 5px solid var(--secondary-col);
+    border-radius: 8px;
+}
+
+.timer-panel-minimal {
+    background: var(--primary-col);
+    border: 1px solid var(--secondary-col);
+    border-radius: 4px;
+}
+
+.timer-panel-material {
+    background: var(--primary-col);
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.35), 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.timer-panel-glass {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 16px;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.timer-panel-neumorphism {
+    background: var(--primary-col);
+    border: none;
+    border-radius: 16px;
+    box-shadow: 8px 8px 16px rgba(0,0,0,0.4), -4px -4px 10px rgba(255,255,255,0.06);
+}
+
+.timer-panel-retro {
+    background: var(--background-col);
+    border: 1px solid var(--text-col);
+    border-radius: 0;
+    box-shadow: 0 0 8px var(--text-col), inset 0 0 4px rgba(255,255,255,0.02);
+}

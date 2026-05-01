@@ -27,7 +27,8 @@
     import "./lib/styles/CheckBoxInput.css";
     import "./lib/styles/UICommon.css";
     import "./lib/styles/Input.css";
-    import "./lib/styles/Select.css"
+    import "./lib/styles/Select.css";
+    import "./lib/styles/Panel.css";
     
 
     let useCustomCSS: boolean = $state(false);
@@ -323,7 +324,7 @@
                 </button>
                 {#if menuVisible}
                     <div transition:fly={{x: -200,  duration: 300}}
-                         class="settingsBody panelBody flex flex-col gap-1.5">
+                         class={"settingsBody panelBody flex flex-col gap-1.5 timer-panel-" + settings.theme.buttonStyle}>
                         <div class="flex flex-row justify-between w-full items-center">
                             <p> Stages: </p>
                             <button onclick={()=>{settings.stages.push({id: "Default", time: 15000, type:"allow-overlap", index: settings.stages.length})}}
@@ -395,7 +396,7 @@
                             <div class="flex flex-row items-center relative">
                                 <button onclick={toggleGradientsPanel} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}><div class="palette-icon icon"/></button>
                                     {#if gradientsVisible === true}
-                                        <div class="gradientPanel">
+                                        <div class={"gradientPanel timer-panel-" + settings.theme.buttonStyle}>
                                             {#each getColorThemes() as colorTheme}
                                                 <div class="flex flex-row justify-between items-center mb-2">
                                                     <div>{colorTheme.name}</div>
@@ -496,7 +497,7 @@
                 </button>
                 {#if savesVisible}
                     <div transition:fly={{x: -200,  duration: 300}}
-                         class="savesPanelBody panelBody flex flex-col gap-1.5">
+                         class={"savesPanelBody panelBody flex flex-col gap-1.5 timer-panel-" + settings.theme.buttonStyle}>
 
                         <div class="flex flex-row justify-between w-full items-center gap-1.5">
                             <p> Save current: </p>
@@ -532,7 +533,7 @@
                     </button>
                     {#if cameraSettingsVisible}
                         <div transition:fly={{x: 200,  duration: 300}}
-                             class="cameraSettingsBody panelBody flex flex-col gap-1.5">
+                             class={"cameraSettingsBody panelBody flex flex-col gap-1.5 timer-panel-" + settings.theme.buttonStyle}>
                             <p> Camera Settings: </p>
 
 
@@ -574,7 +575,7 @@
             {#if infoVisible}
                 <div transition:fly={{x: 200,  duration: 300}}
                      class:cameraSettingsBody={!isElectron} class:infoSettingsBody={isElectron}
-                     class="panelBody flex flex-col gap-1.5">
+                     class={"panelBody flex flex-col gap-1.5 timer-panel-" + settings.theme.buttonStyle}>
                     <div class="flex flex-row justify-between w-full items-center">
                         <p>Git repository(Instructions): </p>
                         <a target="_blank" href="https://github.com/Pazzann/project-timer">here</a>
@@ -737,9 +738,6 @@
         left: 60px;
         width: 200px;
         height: 200px;
-        background: var(--primary-col);
-        border: 5px solid var(--secondary-col);
-        border-radius: 8px;
         text-align: center;
         font-size: 23px;
         padding: 10px;
@@ -752,9 +750,6 @@
         object-fit: contain;
         outline: none;
         align-items: center;
-        background: var(--primary-col);
-        border: 5px solid var(--secondary-col);
-        border-radius: 8px;
         text-align: center;
         font-size: 23px;
         padding: 10px;
