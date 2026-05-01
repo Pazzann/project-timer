@@ -2,35 +2,29 @@
     import { MsToTime } from "../functions/MsToTime";
     import type Settings from "../interfaces/Settings";
 
-    let waveFill: HTMLDivElement;
-
     let { settings }: { settings: Settings } = $props();
 
     const stage = $derived(settings.stages?.[settings.activeStage]);
     const currentTime = $derived(settings.currentStageTime);
     const isOvertime = $derived(stage ? currentTime >= stage.time : false);
+    const flashOn = $derived(isOvertime && currentTime % 1000 > 500);
 
-    $effect(() => {
-        if (!waveFill || !stage) return;
-
-        if (isOvertime) {
-            waveFill.style.height = '100%';
-            const flashOn = currentTime % 1000 > 500;
-            waveFill.style.background = flashOn
-                ? `var(--timer-background-col)`
-                : `var(--secondary-col)`;
-        } else {
-            const progress = (currentTime % stage.time) / stage.time;
-            waveFill.style.height = `${progress * 100}%`;
-            waveFill.style.background = `var(--secondary-col)`;
-        }
-    });
+    const fillHeight = $derived((() => {
+        if (!stage) return 0;
+        if (isOvertime) return 100;
+        return ((currentTime % stage.time) / stage.time) * 100;
+    })());
 </script>
 
 {#if stage}
-<div class="wave-container timer-style-{settings.theme.buttonStyle}">
-    <div bind:this={waveFill} class="wave-fill">
-        <div class="wave-surface"></div>
+<div class="wave-container timer-style-{settings.theme.buttonStyle}" class:overtime={flashOn}>
+    <div class="wave-fill" style="height: {fillHeight}%">
+        <svg class="wave-svg wave-front-svg" viewBox="0 0 200 40" preserveAspectRatio="none">
+            <path d="M0,20 Q25,0 50,20 Q75,0 100,20 Q125,0 150,20 Q175,0 200,20 L200,40 L0,40 Z" />
+        </svg>
+        <svg class="wave-svg wave-back-svg" viewBox="0 0 200 40" preserveAspectRatio="none">
+            <path d="M0,22 Q25,4 50,22 Q75,4 100,22 Q125,4 150,22 Q175,4 200,22 L200,40 L0,40 Z" />
+        </svg>
     </div>
     <div class="time-overlay text-5xl font-bold">
         <p>{MsToTime(currentTime, settings.showSettings)}</p>
@@ -65,26 +59,30 @@
     }
 
     .timer-style-glass {
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.22);
         border-radius: 50%;
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
         background: rgba(255, 255, 255, 0.05);
     }
 
     .timer-style-neumorphism {
         border: none;
         border-radius: 50%;
-        box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.3), -10px -10px 20px rgba(255, 255, 255, 0.07);
+        box-shadow:
+            10px 10px 20px rgba(0, 0, 0, 0.3),
+            -10px -10px 20px rgba(255, 255, 255, 0.07);
     }
 
     .timer-style-retro {
         border: 3px solid var(--secondary-col);
         border-radius: 0;
-        box-shadow: 0 0 15px var(--secondary-col), inset 0 0 20px rgba(0, 0, 0, 0.5);
+        box-shadow:
+            0 0 15px var(--secondary-col),
+            inset 0 0 20px rgba(0, 0, 0, 0.5);
     }
 
-    /* The rising fill — sits at the bottom, grows upward */
+    /* Rising water column */
     .wave-fill {
         position: absolute;
         bottom: 0;
@@ -92,33 +90,60 @@
         width: 100%;
         height: 0%;
         background: var(--secondary-col);
-        transition: height 0.05s linear, background 0.05s linear;
+        transition: height 0.05s linear;
     }
 
-    /* Wave surface — wide ellipse that slides horizontally to simulate a wave */
-    .wave-surface {
+    /* SVG sits at the top of the fill — wavy edge poking above the water surface.
+       Width 200% + translateX(-50%) gives a perfectly seamless horizontal loop. */
+    .wave-svg {
         position: absolute;
         top: -20px;
-        left: -100%;
-        width: 300%;
+        left: 0;
+        width: 200%;
         height: 40px;
-        background: inherit;
-        border-radius: 50%;
-        animation: wave-slide 3s linear infinite;
+        pointer-events: none;
     }
 
-    .timer-style-retro .wave-surface {
-        animation: wave-slide 1.5s linear infinite;
-        filter: drop-shadow(0 0 6px var(--secondary-col));
+    .wave-front-svg {
+        animation: wave-slide 4s linear infinite;
     }
 
-    .timer-style-minimal .wave-surface {
-        display: none;
+    .wave-back-svg {
+        animation: wave-slide 6s linear infinite reverse;
+        opacity: 0.55;
+    }
+
+    .wave-front-svg path,
+    .wave-back-svg path {
+        fill: var(--secondary-col);
+    }
+
+    .wave-container.overtime .wave-fill {
+        background: var(--timer-background-col);
+    }
+
+    .wave-container.overtime .wave-front-svg path,
+    .wave-container.overtime .wave-back-svg path {
+        fill: var(--timer-background-col);
     }
 
     @keyframes wave-slide {
         from { transform: translateX(0); }
-        to   { transform: translateX(33.33%); }
+        to   { transform: translateX(-50%); }
+    }
+
+    /* Theme-specific wave tweaks */
+    .timer-style-retro .wave-front-svg {
+        animation-duration: 2.5s;
+        filter: drop-shadow(0 0 6px var(--secondary-col));
+    }
+    .timer-style-retro .wave-back-svg {
+        animation-duration: 3.5s;
+        opacity: 0.7;
+    }
+
+    .timer-style-minimal .wave-back-svg {
+        display: none;
     }
 
     .time-overlay {
@@ -128,24 +153,24 @@
         flex-direction: column;
         align-items: center;
         color: var(--text-col);
-        mix-blend-mode: difference;
-        text-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+        text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7);
     }
 
     .timer-style-retro .time-overlay {
-        mix-blend-mode: normal;
-        text-shadow: 0 0 10px var(--secondary-col), 0 0 20px var(--secondary-col);
-        color: var(--text-col);
+        text-shadow:
+            0 0 8px var(--secondary-col),
+            0 0 18px var(--secondary-col);
+        font-family: 'Courier New', Courier, monospace;
     }
 
     .timer-style-glass .time-overlay {
-        mix-blend-mode: normal;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
     }
 
     .timer-style-neumorphism .time-overlay {
-        mix-blend-mode: normal;
-        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3), -1px -1px 4px rgba(255, 255, 255, 0.1);
+        text-shadow:
+            1px 1px 4px rgba(0, 0, 0, 0.35),
+            -1px -1px 4px rgba(255, 255, 255, 0.08);
     }
 
     .total-time {

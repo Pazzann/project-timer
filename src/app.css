@@ -26,11 +26,11 @@ body {
 }
 
 :root {
-  --background-col: #021526;
-  --secondary-col: #03346E;
-  --primary-col: #3f6c7a;
-  --timer-background-col: #6EACDA;
-  --text-col: #E2E2B6;
+  --background-col: #1a1a2e;
+  --secondary-col: #16213e;
+  --primary-col: #0f3460;
+  --timer-background-col: #e94560;
+  --text-col: #eaeaea;
 
   --progress-bar-width: 400px;
   --progress-bar-height: 400px;

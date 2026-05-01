@@ -102,7 +102,7 @@
 
     .blocks-grid {
         display: grid;
-        grid-template-columns: repeat(10, 1fr);
+        grid-template-columns: repeat(8, 1fr);
         gap: 6px;
         width: 100%;
     }

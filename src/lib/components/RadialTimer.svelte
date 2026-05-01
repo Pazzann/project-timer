@@ -18,12 +18,9 @@
         }
         overTime = settings.currentStageTime >= settings.stages[settings.activeStage].time;
     });
-
-
-
 </script>
 
-<div bind:this={progressBar} class="circular-progress timer-style-{settings.theme.buttonStyle}">
+<div bind:this={progressBar} class="circular-progress">
     <div class="percentage text-5xl font-bold">
         <p>{MsToTime(settings.currentStageTime, settings.showSettings)}</p>
         <p>{MsToTime(settings.stages[settings.activeStage].time, settings.showSettings)}</p>
@@ -45,17 +42,5 @@
         flex-direction: column;
         position: relative;
         color: var(--text-col);
-    }
-
-    .timer-style-retro .percentage {
-        text-shadow: 0 0 8px var(--secondary-col), 0 0 20px var(--secondary-col);
-    }
-
-    .timer-style-neumorphism .percentage {
-        text-shadow: 1px 1px 3px rgba(0,0,0,0.3), -1px -1px 3px rgba(255,255,255,0.1);
-    }
-
-    .timer-style-glass .percentage {
-        text-shadow: 0 2px 8px rgba(0,0,0,0.4);
     }
 </style>

@@ -3,7 +3,7 @@ import {getColorThemes} from "./getColorThemes";
 
 const defaultSettings: Settings = {
     theme: {
-        colorTheme: getColorThemes()[0],
+        colorTheme: getColorThemes()[5],
         timerType: "radial",
         fontFamily: "Segoe UI",
         buttonStyle: "default",

@@ -1,6 +1,7 @@
 <script lang="ts">
     import type Settings from "./lib/interfaces/Settings";
     import RadialTimer from "./lib/components/RadialTimer.svelte";
+    import RingTimer from "./lib/components/RingTimer.svelte";
     import LinearTimer from "./lib/components/LinearTimer.svelte";
     import NumberTimer from "./lib/components/NumberTimer.svelte";
     import BlocksTimer from "./lib/components/BlocksTimer.svelte";
@@ -183,7 +184,7 @@
     // settings updates
     //
     let parseFieldValue: string = $state("");
-    let timerTypePresets: TimerType[] = ["radial", "linear", "number", "blocks", "wave"];
+    let timerTypePresets: TimerType[] = ["radial", "ring", "linear", "number", "blocks", "wave"];
 
     function copy() {
         navigator.clipboard.writeText(JSON.stringify(settings));
@@ -701,6 +702,8 @@
                 <div class="timer content-center justify-center flex flex-row">
                     {#if settings.theme.timerType === "radial"}
                         <RadialTimer settings={settings}></RadialTimer>
+                    {:else if settings.theme.timerType === "ring"}
+                        <RingTimer settings={settings}></RingTimer>
                     {:else if settings.theme.timerType === "linear"}
                         <LinearTimer settings={settings}></LinearTimer>
                     {:else if settings.theme.timerType === "number"}
