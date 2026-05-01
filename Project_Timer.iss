@@ -3,7 +3,7 @@
 ; Non-commercial use only
 
 #define MyAppName "Project Timer"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "2.0.0"
 #define MyAppExeName "Project Timer.exe"
 
 [Setup]
@@ -13,11 +13,11 @@ AppId={{9E423CB5-15C4-46B9-8D24-75E013E0D370}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
-DefaultDirName={autopf}\{#MyAppName}\{#MyAppVersion}
+DefaultDirName={autopf}\{#MyAppName}
 UninstallDisplayIcon={app}\{#MyAppExeName}
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
-OutputBaseFilename=mysetup
+OutputBaseFilename=project-timer-v{#MyAppVersion}
 SolidCompression=yes
 WizardStyle=modern dynamic
 

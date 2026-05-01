@@ -1,5 +1,6 @@
 import type Settings from "../interfaces/Settings";
 import {getColorThemes} from "./getColorThemes";
+import packageJson from '../../../package.json' with { type: 'json' };
 
 const defaultSettings: Settings = {
     theme: {
@@ -21,7 +22,7 @@ const defaultSettings: Settings = {
     deltaTimeShowSetting: "ms",
     currentStageTime: 0,
     activeStage: 0,
-    appVersion: "2.0.0"
+    appVersion: packageJson.version
 }
 
 export function getDefaultSettings() {
