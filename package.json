@@ -37,8 +37,8 @@
     "vite-plugin-singlefile": "^2.3.0"
   },
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.1",
-    "@yegorvk/node-vcam": "0.1.0-beta.1"
+    "@yegorvk/node-vcam": "0.1.0-beta.1",
+    "electron-squirrel-startup": "^1.0.1"
   },
   "build": {
     "appId": "com.project-timer.app",
