@@ -32,6 +32,7 @@
     import "./lib/styles/Input.css";
     import "./lib/styles/Select.css";
     import "./lib/styles/Panel.css";
+    import {onDestroy, onMount} from "svelte";
     
 
     let useCustomCSS: boolean = $state(false);
@@ -378,7 +379,7 @@
         startTime = Date.now();
     }
 
-    //
+
 
 
 </script>
@@ -395,9 +396,9 @@
             {#key settings}
                 <button onclick={toggleMenu} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} aria-label="Toggle settings">
                     {#if menuVisible}
-                        <div class="close-icon icon"/>
+                        <div class={"icon icon-" + settings.theme.iconPack + " close-icon"}/>
                     {:else}
-                        <div class="settings-icon icon"/>
+                        <div class={"icon icon-" + settings.theme.iconPack + " settings-icon"}/>
                     {/if}
                 </button>
                 {#if menuVisible}
@@ -407,10 +408,11 @@
                             <p> Stages: </p>
                             <button onclick={()=>{settings.stages.push({id: "Default", time: 15000, type:"allow-overlap", index: settings.stages.length})}}
                                     class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} aria-label="Add stage">
-                                <div class="icon add-icon"/>
+                                <div class={"icon icon-" + settings.theme.iconPack + " add-icon"}/>
                             </button>
                         </div>
-                        <div class="stages-panel flex flex-col overflow-scroll">
+                        <div class={"stages-panel flex flex-col overflow-scroll timer-panel-" + settings.theme.buttonStyle}>
+
                             {#key shiza}
                                 <SortableList
                                         onUpdate={(event) => {
@@ -472,14 +474,14 @@
                         <div class="flex flex-row w-full justify-between items-center">
                             <p>Colors: </p>
                             <div class="flex flex-row items-center relative">
-                                <button onclick={toggleGradientsPanel} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}><div class="palette-icon icon"/></button>
+                                <button onclick={toggleGradientsPanel} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}><div class={"icon icon-" + settings.theme.iconPack + " palette-icon"}/></button>
                                     {#if gradientsVisible === true}
                                         <div class={"gradientPanel timer-panel-" + settings.theme.buttonStyle}>
                                             {#each getColorThemes() as colorTheme}
                                                 <div class="flex flex-row justify-between items-center mb-2">
                                                     <div>{colorTheme.name}</div>
                                                     <button class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} onclick={()=>setColorTheme(colorTheme)}>
-                                                        <div class="icon select-icon"/>
+                                                        <div class={"icon icon-" + settings.theme.iconPack + " select-icon"}/>
                                                     </button>
                                                 </div>
                                             {/each}
@@ -537,6 +539,13 @@
                                 <option value="retro">Retro</option>
                             </select>
                         </div>
+                        <div class="flex flex-row w-full justify-between items-center">
+                            <p>Icons: </p>
+                            <select class={"timer-select-" + settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} bind:value={settings.theme.iconPack}>
+                                <option value="default">Default</option>
+                                <option value="material">Material</option>
+                            </select>
+                        </div>
 
                         <div class="flex flex-row gap-1.5 justify-between w-full items-center">
                             <div>Font:</div>
@@ -549,9 +558,9 @@
                             <input class={"w-full timer-input-" + settings.theme.buttonStyle+ " timer-common-" + settings.theme.buttonStyle} type="text" bind:value={parseFieldValue}
                                    placeholder="parse preset here"/>
                             <div class="flex flex-row gap-3 justify-between">
-                                <button onclick={copy} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}><div class="icon copy-icon"/></button>
-                                <button onclick={()=>{parse(); parseFieldValue="";}} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}><div class="icon select-icon"/></button>
-                                <button onclick={setToDefault} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}><div class="icon reset-icon"/></button>
+                                <button onclick={copy} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}><div class={"icon icon-" + settings.theme.iconPack + " copy-icon"}/></button>
+                                <button onclick={()=>{parse(); parseFieldValue="";}} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}><div class={"icon icon-" + settings.theme.iconPack + " select-icon"}/></button>
+                                <button onclick={setToDefault} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}><div class={"icon icon-" + settings.theme.iconPack + " reset-icon"}/></button>
                             </div>
                         </div>
 
@@ -568,9 +577,9 @@
             <div class="savesPanel settingsPanel">
                 <button onclick={toggleSavesPanel} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} aria-label="Toggle info panel">
                     {#if savesVisible}
-                        <div class="close-icon icon"/>
+                        <div class={"icon icon-" + settings.theme.iconPack + " close-icon"}/>
                     {:else}
-                        <div class="saves-icon icon"/>
+                        <div class={"icon icon-" + settings.theme.iconPack + " saves-icon"}/>
                     {/if}
                 </button>
                 {#if savesVisible}
@@ -579,16 +588,16 @@
 
                         <div class="flex flex-row justify-between w-full items-center gap-1.5">
                             <p> Save current: </p>
-                            <button class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} onclick={()=>{makeSave()}}><div class="icon saves-icon" /></button>
-                            <button class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} onclick={()=>{openSaveFolder()}}><div class="icon folder-icon" /></button>
+                            <button class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} onclick={()=>{makeSave()}}><div class={"icon icon-" + settings.theme.iconPack + " saves-icon"} /></button>
+                            <button class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} onclick={()=>{openSaveFolder()}}><div class={"icon icon-" + settings.theme.iconPack + " folder-icon"} /></button>
                         </div>
 
                         {#each files as item}
                             <div class="flex flex-row justify-between w-full items-center">
                                 <p>{item.split(".json").join("")}</p>
                                 <div class="flex flex-row gap-1.5">
-                                    <button class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} onclick={()=>loadSave(item)}><div class="icon load-icon" /></button>
-                                    <button class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} onclick={()=>deleteSave(item)} ><div class="icon delete-icon" /></button>
+                                    <button class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} onclick={()=>loadSave(item)}><div class={"icon icon-" + settings.theme.iconPack + " load-icon"} /></button>
+                                    <button class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} onclick={()=>deleteSave(item)} ><div class={"icon icon-" + settings.theme.iconPack + " delete-icon"} /></button>
                                 </div>
                             </div>
                         {/each}
@@ -604,9 +613,9 @@
                 {#key cameraSettings}
                     <button onclick={toggleCameraSettings} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} aria-label="Toggle camera settings">
                         {#if cameraSettingsVisible}
-                            <div class="close-icon icon"/>
+                            <div class={"icon icon-" + settings.theme.iconPack + " close-icon"}/>
                         {:else}
-                            <div class="camera-icon icon"/>
+                            <div class={"icon icon-" + settings.theme.iconPack + " camera-icon"}/>
                         {/if}
                     </button>
                     {#if cameraSettingsVisible}
@@ -619,7 +628,7 @@
                                 <div>fps:</div>
                                 <input class={"timer-input-" + settings.theme.buttonStyle} type="number" bind:value={cameraSettings.fps}
                                        placeholder="FPS"/>
-                                <button onclick={changeFPS} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}><div class="icon select-icon"></div> </button>
+                                <button onclick={changeFPS} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}><div class={"icon icon-" + settings.theme.iconPack + " select-icon"}></div> </button>
                             </div>
 
 
@@ -645,9 +654,9 @@
         <div class:cameraSettings={!isElectron} class:infoPanel={isElectron} class="settingsPanel">
             <button onclick={toggleInfoPanel} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} aria-label="Toggle info panel">
                 {#if infoVisible}
-                    <div class="close-icon icon"/>
+                    <div class={"icon icon-" + settings.theme.iconPack + " close-icon"}/>
                 {:else}
-                    <div class="info-icon icon"/>
+                    <div class={"icon icon-" + settings.theme.iconPack + " info-icon"}/>
                 {/if}
             </button>
             {#if infoVisible}
@@ -737,18 +746,18 @@
                 </div>
                 <nav class="flex flex-row">
                     <button onclick={onTimerButtonClick} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}>{#if progress}
-                        <div class="icon pause-icon"/>
+                        <div class={"icon icon-" + settings.theme.iconPack + " pause-icon"}/>
                     {:else}
-                        <div class="icon play-icon"/>
+                        <div class={"icon icon-" + settings.theme.iconPack + " play-icon"}/>
                     {/if} </button>
-                    <button onclick={onResetButtonClick} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}><div class="icon reset-icon"/></button>
-                    <button onclick={onFullResetButtonClick} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}><div class="icon full-reset-icon"/></button>
+                    <button onclick={onResetButtonClick} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}><div class={"icon icon-" + settings.theme.iconPack + " reset-icon"}/></button>
+                    <button onclick={onFullResetButtonClick} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}><div class={"icon icon-" + settings.theme.iconPack + " full-reset-icon"}/></button>
                     <div class="flex">
                         <button onclick={()=>changeTimerStage(-1)} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}>
-                            <div class="icon left-arrow-icon"/>
+                            <div class={"icon icon-" + settings.theme.iconPack + " left-arrow-icon"}/>
                         </button>
                         <button onclick={()=>changeTimerStage(1)} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}>
-                            <div class="icon right-arrow-icon"/>
+                            <div class={"icon icon-" + settings.theme.iconPack + " right-arrow-icon"}/>
                         </button>
                     </div>
                     <div class="flex">
@@ -760,10 +769,10 @@
                             <option value="ms">ms</option>
                         </select>
                         <button onclick={()=>changeTimerTime(settings.deltaTime)} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}>
-                            <div class="icon plus-icon"/>
+                            <div class={"icon icon-" + settings.theme.iconPack + " plus-icon"}/>
                         </button>
                         <button onclick={()=>changeTimerTime(-settings.deltaTime)} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}>
-                            <div class="icon minus-icon"/>
+                            <div class={"icon icon-" + settings.theme.iconPack + " minus-icon"}/>
                         </button>
                     </div>
                 </nav>
@@ -787,6 +796,9 @@
     .stages-panel {
         max-height: 200px;
         overflow-x: hidden;
+        overflow-y: auto; /* allow vertical scrolling when many stages */
+        flex-shrink: 0;
+        padding:3px;
     }
 
     nav {
@@ -833,6 +845,24 @@
         left: 0;
     }
 
+    .panelBody {
+        position: absolute;
+        object-fit: contain;
+        outline: none;
+        align-items: center;
+        text-align: center;
+        font-size: 23px;
+        padding: 10px;
+
+        top: 70px;
+
+        /* make settings panels scrollable and constrain their height */
+        max-height: 550px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+
     .settingsPanel {
         z-index: 10;
         position: absolute;
@@ -849,18 +879,6 @@
         padding: 10px;
         z-index: 20;
         overflow: auto;
-    }
-
-    .panelBody {
-        position: absolute;
-        object-fit: contain;
-        outline: none;
-        align-items: center;
-        text-align: center;
-        font-size: 23px;
-        padding: 10px;
-
-        top: 70px;
     }
 
     a {

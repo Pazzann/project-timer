@@ -1,4 +1,3 @@
-
 <script lang="ts">
     import {onMount} from "svelte";
     import type Stage from "../interfaces/Stage";
@@ -33,7 +32,7 @@
             </option>
         {/each}
     </select>
-    <button onclick={()=>deleteStage(item.index)} class={"timer-button-"+theme.buttonStyle + " timer-common-" + theme.buttonStyle}><div class="icon delete-icon"/></button>
+    <button onclick={()=>deleteStage(item.index)} class={"timer-button-"+theme.buttonStyle + " timer-common-" + theme.buttonStyle}><div class={"icon icon-" + theme.iconPack + " delete-icon"}/></button>
 </div>
 
 <style>

@@ -7,5 +7,5 @@ export default interface Theme {
     //fontsize
     fontFamily: string;
     buttonStyle: "default" | "minimal" | "material" | "glass" | "neumorphism" | "retro";
-    iconPack: "default" | "minimal";
+    iconPack: "default" | "material";
 }

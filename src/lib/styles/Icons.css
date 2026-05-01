@@ -8,106 +8,56 @@
     mask-size: contain;
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
-}
-.camera-icon {
-    -webkit-mask-image: url("../icons/camera-front.svg");
-    mask-image: url("../icons/camera-front.svg");
+    -webkit-mask-position: center;
+    mask-position: center;
 }
 
-.close-icon {
-    -webkit-mask-image: url("../icons/close-circle.svg");
-    mask-image: url("../icons/close-circle.svg");
-}
+/* ============================================================
+   DEFAULT ICON PACK
+   ============================================================ */
+.icon-default.camera-icon       { -webkit-mask-image: url("../icons/default/camera-front.svg");  mask-image: url("../icons/default/camera-front.svg"); }
+.icon-default.close-icon        { -webkit-mask-image: url("../icons/default/close-circle.svg");  mask-image: url("../icons/default/close-circle.svg"); }
+.icon-default.info-icon         { -webkit-mask-image: url("../icons/default/info-circle.svg");   mask-image: url("../icons/default/info-circle.svg"); }
+.icon-default.settings-icon     { -webkit-mask-image: url("../icons/default/settings-2.svg");    mask-image: url("../icons/default/settings-2.svg"); }
+.icon-default.add-icon          { -webkit-mask-image: url("../icons/default/add-ellipse.svg");   mask-image: url("../icons/default/add-ellipse.svg"); }
+.icon-default.delete-icon       { -webkit-mask-image: url("../icons/default/delete-2.svg");      mask-image: url("../icons/default/delete-2.svg"); }
+.icon-default.plus-icon         { -webkit-mask-image: url("../icons/default/plus.svg");          mask-image: url("../icons/default/plus.svg"); }
+.icon-default.minus-icon        { -webkit-mask-image: url("../icons/default/minus.svg");         mask-image: url("../icons/default/minus.svg"); }
+.icon-default.left-arrow-icon   { -webkit-mask-image: url("../icons/default/left-arrow.svg");    mask-image: url("../icons/default/left-arrow.svg"); }
+.icon-default.right-arrow-icon  { -webkit-mask-image: url("../icons/default/right-arrow.svg");   mask-image: url("../icons/default/right-arrow.svg"); }
+.icon-default.saves-icon        { -webkit-mask-image: url("../icons/default/save.svg");          mask-image: url("../icons/default/save.svg"); }
+.icon-default.palette-icon      { -webkit-mask-image: url("../icons/default/palette.svg");       mask-image: url("../icons/default/palette.svg"); }
+.icon-default.copy-icon         { -webkit-mask-image: url("../icons/default/copy.svg");          mask-image: url("../icons/default/copy.svg"); }
+.icon-default.paste-icon        { -webkit-mask-image: url("../icons/default/paste.svg");         mask-image: url("../icons/default/paste.svg"); }
+.icon-default.reset-icon        { -webkit-mask-image: url("../icons/default/reset.svg");         mask-image: url("../icons/default/reset.svg"); }
+.icon-default.load-icon         { -webkit-mask-image: url("../icons/default/load-circle.svg");   mask-image: url("../icons/default/load-circle.svg"); }
+.icon-default.select-icon       { -webkit-mask-image: url("../icons/default/select.svg");        mask-image: url("../icons/default/select.svg"); }
+.icon-default.play-icon         { -webkit-mask-image: url("../icons/default/play.svg");          mask-image: url("../icons/default/play.svg"); }
+.icon-default.pause-icon        { -webkit-mask-image: url("../icons/default/pause.svg");         mask-image: url("../icons/default/pause.svg"); }
+.icon-default.full-reset-icon   { -webkit-mask-image: url("../icons/default/reset-full.svg");    mask-image: url("../icons/default/reset-full.svg"); }
+.icon-default.folder-icon       { -webkit-mask-image: url("../icons/default/folder.svg");        mask-image: url("../icons/default/folder.svg"); }
 
-.info-icon {
-    -webkit-mask-image: url("../icons/info-circle.svg");
-    mask-image: url("../icons/info-circle.svg");
-}
-
-.settings-icon {
-    -webkit-mask-image: url("../icons/settings-2.svg");
-    mask-image: url("../icons/settings-2.svg");
-}
-
-.add-icon{
-    -webkit-mask-image: url("../icons/add-ellipse.svg");
-    mask-image: url("../icons/add-ellipse.svg");
-}
-
-.delete-icon{
-    -webkit-mask-image: url("../icons/delete-2.svg");
-    mask-image: url("../icons/delete-2.svg");
-}
-
-
-.plus-icon{
-    -webkit-mask-image: url("../icons/plus.svg");
-    mask-image: url("../icons/plus.svg");
-}
-.minus-icon{
-    -webkit-mask-image: url("../icons/minus.svg");
-    mask-image: url("../icons/minus.svg");
-}
-
-
-.left-arrow-icon{
-    -webkit-mask-image: url("../icons/left-arrow.svg");
-    mask-image: url("../icons/left-arrow.svg");
-}
-.right-arrow-icon{
-    -webkit-mask-image: url("../icons/right-arrow.svg");
-    mask-image: url("../icons/right-arrow.svg");
-}
-
-.saves-icon{
-    -webkit-mask-image: url("../icons/save.svg");
-    mask-image: url("../icons/save.svg");
-}
-
-.palette-icon{
-    -webkit-mask-image: url("../icons/palette.svg");
-    mask-image: url("../icons/palette.svg");
-}
-
-.copy-icon{
-    -webkit-mask-image: url("../icons/copy.svg");
-    mask-image: url("../icons/copy.svg");
-}
-
-.paste-icon{
-    -webkit-mask-image: url("../icons/paste.svg");
-    mask-image: url("../icons/paste.svg");
-}
-
-.reset-icon{
-    -webkit-mask-image: url("../icons/reset.svg");
-    mask-image: url("../icons/reset.svg");
-}
-
-.load-icon{
-    -webkit-mask-image: url("../icons/load-circle.svg");
-    mask-image: url("../icons/load-circle.svg");
-}
-.select-icon{
-    -webkit-mask-image: url("../icons/select.svg");
-    mask-image: url("../icons/select.svg");
-}
-
-.play-icon{
-    -webkit-mask-image: url("../icons/play.svg");
-    mask-image: url("../icons/play.svg");
-}
-.pause-icon{
-    -webkit-mask-image: url("../icons/pause.svg");
-    mask-image: url("../icons/pause.svg");
-}
-
-.full-reset-icon{
-    -webkit-mask-image: url("../icons/reset-full.svg");
-    mask-image: url("../icons/reset-full.svg");
-}
-
-.folder-icon{
-    -webkit-mask-image: url("../icons/folder.svg");
-    mask-image: url("../icons/folder.svg");
-}
+/* ============================================================
+   MATERIAL ICON PACK
+   ============================================================ */
+.icon-material.camera-icon      { -webkit-mask-image: url("../icons/material/camera-front.svg"); mask-image: url("../icons/material/camera-front.svg"); }
+.icon-material.close-icon       { -webkit-mask-image: url("../icons/material/close-circle.svg"); mask-image: url("../icons/material/close-circle.svg"); }
+.icon-material.info-icon        { -webkit-mask-image: url("../icons/material/info-circle.svg");  mask-image: url("../icons/material/info-circle.svg"); }
+.icon-material.settings-icon    { -webkit-mask-image: url("../icons/material/settings-2.svg");   mask-image: url("../icons/material/settings-2.svg"); }
+.icon-material.add-icon         { -webkit-mask-image: url("../icons/material/add-ellipse.svg");  mask-image: url("../icons/material/add-ellipse.svg"); }
+.icon-material.delete-icon      { -webkit-mask-image: url("../icons/material/delete-2.svg");     mask-image: url("../icons/material/delete-2.svg"); }
+.icon-material.plus-icon        { -webkit-mask-image: url("../icons/material/plus.svg");         mask-image: url("../icons/material/plus.svg"); }
+.icon-material.minus-icon       { -webkit-mask-image: url("../icons/material/minus.svg");        mask-image: url("../icons/material/minus.svg"); }
+.icon-material.left-arrow-icon  { -webkit-mask-image: url("../icons/material/left-arrow.svg");   mask-image: url("../icons/material/left-arrow.svg"); }
+.icon-material.right-arrow-icon { -webkit-mask-image: url("../icons/material/right-arrow.svg");  mask-image: url("../icons/material/right-arrow.svg"); }
+.icon-material.saves-icon       { -webkit-mask-image: url("../icons/material/save.svg");         mask-image: url("../icons/material/save.svg"); }
+.icon-material.palette-icon     { -webkit-mask-image: url("../icons/material/palette.svg");      mask-image: url("../icons/material/palette.svg"); }
+.icon-material.copy-icon        { -webkit-mask-image: url("../icons/material/copy.svg");         mask-image: url("../icons/material/copy.svg"); }
+.icon-material.paste-icon       { -webkit-mask-image: url("../icons/material/paste.svg");        mask-image: url("../icons/material/paste.svg"); }
+.icon-material.reset-icon       { -webkit-mask-image: url("../icons/material/reset.svg");        mask-image: url("../icons/material/reset.svg"); }
+.icon-material.load-icon        { -webkit-mask-image: url("../icons/material/load-circle.svg");  mask-image: url("../icons/material/load-circle.svg"); }
+.icon-material.select-icon      { -webkit-mask-image: url("../icons/material/select.svg");       mask-image: url("../icons/material/select.svg"); }
+.icon-material.play-icon        { -webkit-mask-image: url("../icons/material/play.svg");         mask-image: url("../icons/material/play.svg"); }
+.icon-material.pause-icon       { -webkit-mask-image: url("../icons/material/pause.svg");        mask-image: url("../icons/material/pause.svg"); }
+.icon-material.full-reset-icon  { -webkit-mask-image: url("../icons/material/reset-full.svg");   mask-image: url("../icons/material/reset-full.svg"); }
+.icon-material.folder-icon      { -webkit-mask-image: url("../icons/material/folder.svg");       mask-image: url("../icons/material/folder.svg"); }
