@@ -80,7 +80,7 @@ const camera = new VirtualCamera(Backend.UnityCapture);
 const createWindow = () => {
     console.log("Creating browser window...");
     mainWindow = new BrowserWindow({
-        width: 840,
+        width: 860,
         height: 700,
         resizable: false,
         webPreferences: {
