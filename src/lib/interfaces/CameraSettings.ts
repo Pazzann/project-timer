@@ -3,4 +3,5 @@ export default interface CameraSettings{
     //height: number;
     fps: number;
     enabled: boolean;
+    flipped: boolean;
 }

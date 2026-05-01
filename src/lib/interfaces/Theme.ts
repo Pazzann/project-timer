@@ -1,13 +1,11 @@
 import type {TimerType} from "../types/TimerType";
+import type ColorTheme from "./ColorTheme";
 
 export default interface Theme {
-    backgroundCol: string;
-    primaryColor: string;
-    secondaryColor: string;
-    timerSecondaryColor: string;
-    textColor: string;
+    colorTheme: ColorTheme;
     timerType: TimerType;
     //fontsize
     fontFamily: string;
-
+    buttonStyle: "default" | "minimal" | "custom";
+    iconPack: "default" | "colorful" | "minimal";
 }

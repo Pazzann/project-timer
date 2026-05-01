@@ -1,14 +1,13 @@
 import type Settings from "../interfaces/Settings";
+import {getColorThemes} from "./getColorThemes";
 
 const defaultSettings: Settings = {
     theme: {
-        backgroundCol: "#021526",
-        primaryColor: "#3f6c7a",
-        secondaryColor: "#03346E",
-        timerSecondaryColor: "#6EACDA",
-        textColor: "#E2E2B6",
+        colorTheme: getColorThemes()[0],
         timerType: "radial",
-        fontFamily: "Segoe UI"
+        fontFamily: "Segoe UI",
+        buttonStyle: "default",
+        iconPack: "default"
     },
     name: "Default Timer",
     stages: [

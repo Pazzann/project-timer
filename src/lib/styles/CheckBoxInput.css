@@ -1,7 +1,7 @@
 /* --- Custom Checkbox Styles --- */
 
 /* Give your checkbox input this class */
-.custom-checkbox {
+.timer-checkbox-default {
     /* 1. Hide the default browser checkbox */
     appearance: none;
     -webkit-appearance: none;
@@ -15,8 +15,6 @@
     position: relative;     /* Needed to position the checkmark */
 
     /* 3. Style it to match your theme */
-    background: var(--primary-col);
-    border: 3px solid var(--secondary-col);
     border-radius: 4px; /* Slightly less round than buttons */
     cursor: pointer;
 
@@ -25,7 +23,7 @@
 }
 
 /* 5. Create the checkmark using ::after */
-.custom-checkbox::after {
+.timer-checkbox-default::after {
     content: '';
     position: absolute;
     display: none; /* Hide it by default */
@@ -47,29 +45,29 @@
 /* --- States --- */
 
 /* Show the checkmark when the box is checked */
-.custom-checkbox:checked::after {
+.timer-checkbox-default:checked::after {
     display: block;
 }
 
 /* Change background when checked (like in your screenshot) */
-.custom-checkbox:checked {
+.timer-checkbox-default:checked {
     background: var(--secondary-col);
     border-color: var(--secondary-col);
 }
 
 /* Hover state (matches button hover) */
-.custom-checkbox:not([disabled]):hover {
+.timer-checkbox-default:not([disabled]):hover {
     background: var(--secondary-col);
 }
 
 /* Focus state (matches button focus) */
-.custom-checkbox:not([disabled]):focus {
+.timer-checkbox-default:not([disabled]):focus {
     outline: none;
     border: 3px dashed var(--secondary-col);
 }
 
 /* Disabled state */
-.custom-checkbox:disabled {
+.timer-checkbox-default:disabled {
     cursor: default;
     opacity: 0.6;
 }

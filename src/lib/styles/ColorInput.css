@@ -1,11 +1,10 @@
-.custom-color-input {
+.timer-color-input-default {
     /* Reset browser default appearance */
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
 
-    /* Make the input element itself transparent */
-    background-color: transparent;
+
 
     /* Set a fixed size for the clickable area */
     width: 40px;
@@ -25,13 +24,17 @@
 /* --- WebKit Browsers (Chrome, Safari, Edge) --- */
 
 /* Remove padding from the wrapper */
-.custom-color-input::-webkit-color-swatch-wrapper {
+.timer-color-input-default::-webkit-color-swatch-wrapper {
     padding: 0;
+}
+.timer-color-input-default.timer-common-default{
+    /* Make the input element itself transparent */
+    background-color: transparent;
+    border: none;
 }
 
 /* Style the actual color swatch */
-.custom-color-input::-webkit-color-swatch {
-    /* Add a border similar to the image's UI */
+.timer-color-input-default::-webkit-color-swatch {
     border: 5px solid var(--secondary-col);
     /* Add a slight border-radius */
     border-radius: 3px;
@@ -40,7 +43,7 @@
 /* --- Firefox --- */
 
 /* Style the actual color swatch */
-.custom-color-input::-moz-color-swatch {
+.timer-color-input-default::-moz-color-swatch {
     border: 5px solid var(--secondary-col);
     border-radius: 3px;
 }

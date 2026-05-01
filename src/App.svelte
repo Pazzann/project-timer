@@ -3,10 +3,7 @@
     import RadialTimer from "./lib/components/RadialTimer.svelte";
     import LinearTimer from "./lib/components/LinearTimer.svelte";
     import NumberTimer from "./lib/components/NumberTimer.svelte";
-    import "./lib/styles/Button.css";
-    import "./lib/styles/Icons.css";
-    import "./lib/styles/ColorInput.css";
-    import "./lib/styles/CheckBoxInput.css";
+
     import {MsToTime} from "./lib/functions/MsToTime";
     import {SortableList} from '@jhubbardsf/svelte-sortablejs';
     import {
@@ -22,6 +19,21 @@
 
 
     import TimerLogo from "./lib/icons/ProjectTimerLogo.png";
+
+
+    import "./lib/styles/Button.css";
+    import "./lib/styles/Icons.css";
+    import "./lib/styles/ColorInput.css";
+    import "./lib/styles/CheckBoxInput.css";
+    import "./lib/styles/UICommon.css";
+    import "./lib/styles/Input.css";
+    import "./lib/styles/Select.css"
+    
+
+    let useCustomCSS: boolean = $state(false);
+    let fontString: string = $state("");
+
+
 
     // main variables
     let settings: Settings = $state(getDefaultSettings());
@@ -139,19 +151,23 @@
     }
 
     function parse(value: string = parseFieldValue) {
-        let parsedSettings: Settings = JSON.parse(value);
+        try{
+            let parsedSettings: Settings = JSON.parse(value);
 
-        for (let i = 0; i < parsedSettings.stages.length; i++) {
-            parsedSettings.stages[i].index = i;
+            for (let i = 0; i < parsedSettings.stages.length; i++) {
+                parsedSettings.stages[i].index = i;
+            }
+            settings = parsedSettings;
+            updateColor('--background-col', settings.theme.colorTheme.backgroundCol);
+            updateColor('--primary-col', settings.theme.colorTheme.primaryColor);
+            updateColor('--secondary-col', settings.theme.colorTheme.secondaryColor);
+            updateColor('--timer-background-col', settings.theme.colorTheme.timerSecondaryColor);
+            updateColor('--text-col', settings.theme.colorTheme.textColor);
+            updateColor('--font-family', settings.theme.fontFamily);
+        } catch (e){
+            alert("Invalid preset!");
+            settings = getDefaultSettings();
         }
-        settings = parsedSettings;
-        updateColor('--background-col', settings.theme.backgroundCol);
-        updateColor('--primary-col', settings.theme.primaryColor);
-        updateColor('--secondary-col', settings.theme.secondaryColor);
-        updateColor('--timer-background-col', settings.theme.timerSecondaryColor);
-        updateColor('--text-col', settings.theme.textColor);
-        updateColor('--font-family', settings.theme.fontFamily);
-
     }
 
     function updateColor(variable: string, value: string) {
@@ -181,16 +197,12 @@
     }
 
     function setColorTheme(colorTheme: ColorTheme){
-        settings.theme.backgroundCol = colorTheme.backgroundCol;
-        settings.theme.primaryColor = colorTheme.primaryColor;
-        settings.theme.secondaryColor = colorTheme.secondaryColor;
-        settings.theme.timerSecondaryColor = colorTheme.timerSecondaryColor;
-        settings.theme.textColor = colorTheme.textColor;
-        updateColor('--background-col', settings.theme.backgroundCol);
-        updateColor('--primary-col', settings.theme.primaryColor);
-        updateColor('--secondary-col', settings.theme.secondaryColor);
-        updateColor('--timer-background-col', settings.theme.timerSecondaryColor);
-        updateColor('--text-col', settings.theme.textColor);
+        settings.theme.colorTheme = colorTheme;
+        updateColor('--background-col', settings.theme.colorTheme.backgroundCol);
+        updateColor('--primary-col', settings.theme.colorTheme.primaryColor);
+        updateColor('--secondary-col', settings.theme.colorTheme.secondaryColor);
+        updateColor('--timer-background-col', settings.theme.colorTheme.timerSecondaryColor);
+        updateColor('--text-col', settings.theme.colorTheme.textColor);
     }
 
     //
@@ -199,7 +211,8 @@
 
     let cameraSettings: CameraSettings = $state({
         fps: 30,
-        enabled: false
+        enabled: false,
+        flipped: false
     });
 
     function changeFPS(){
@@ -301,7 +314,7 @@
         <!--Settings-->
         <div class="defaultSettings settingsPanel">
             {#key settings}
-                <button onclick={toggleMenu} class="timer-button" aria-label="Toggle settings">
+                <button onclick={toggleMenu} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} aria-label="Toggle settings">
                     {#if menuVisible}
                         <div class="close-icon icon"/>
                     {:else}
@@ -314,7 +327,7 @@
                         <div class="flex flex-row justify-between w-full items-center">
                             <p> Stages: </p>
                             <button onclick={()=>{settings.stages.push({id: "Default", time: 15000, type:"allow-overlap", index: settings.stages.length})}}
-                                    class="timer-button" aria-label="Add stage">
+                                    class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} aria-label="Add stage">
                                 <div class="icon add-icon"/>
                             </button>
                         </div>
@@ -340,7 +353,7 @@
                                 >
 
                                     {#each settings.stages as item}
-                                        <StageInput deleteStage={deleteStage} item={item}></StageInput>
+                                        <StageInput deleteStage={deleteStage} item={item} theme={settings.theme}></StageInput>
                                     {/each}
 
 
@@ -352,23 +365,23 @@
                             <p>Display time:</p>
                             <div class="flex flex-row gap-1.5 items-center justify-center">
                                 h:
-                                <input class="custom-checkbox" type="checkbox" bind:group={settings.showSettings}
+                                <input class={"timer-checkbox-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} type="checkbox" bind:group={settings.showSettings}
                                        value="h"/>
                                 m:
-                                <input class="custom-checkbox" type="checkbox" bind:group={settings.showSettings}
+                                <input class={"timer-checkbox-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} type="checkbox" bind:group={settings.showSettings}
                                        value="m"/>
                                 s:
-                                <input class="custom-checkbox" type="checkbox" bind:group={settings.showSettings}
+                                <input class={"timer-checkbox-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} type="checkbox" bind:group={settings.showSettings}
                                        value="s"/>
                                 ms:
-                                <input class="custom-checkbox" type="checkbox" bind:group={settings.showSettings}
+                                <input class={"timer-checkbox-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} type="checkbox" bind:group={settings.showSettings}
                                        value="ms"/>
                             </div>
                         </div>
 
                         <div class="flex flex-row w-full justify-between items-center">
                             <p>Timer type:</p>
-                            <select bind:value={settings.theme.timerType}>
+                            <select class={"timer-select-" + settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} bind:value={settings.theme.timerType}>
                                 {#each timerTypePresets as preset}
                                     <option value={preset}>
                                         {preset}
@@ -380,13 +393,13 @@
                         <div class="flex flex-row w-full justify-between items-center">
                             <p>Colors: </p>
                             <div class="flex flex-row items-center relative">
-                                <button onclick={toggleGradientsPanel} class="timer-button"><div class="palette-icon icon"/></button>
+                                <button onclick={toggleGradientsPanel} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}><div class="palette-icon icon"/></button>
                                     {#if gradientsVisible === true}
                                         <div class="gradientPanel">
                                             {#each getColorThemes() as colorTheme}
                                                 <div class="flex flex-row justify-between items-center mb-2">
                                                     <div>{colorTheme.name}</div>
-                                                    <button class="timer-button" onclick={()=>setColorTheme(colorTheme)}>
+                                                    <button class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} onclick={()=>setColorTheme(colorTheme)}>
                                                         <div class="icon select-icon"/>
                                                     </button>
                                                 </div>
@@ -398,37 +411,37 @@
 
                                 <div>or</div>
                                 <input
-                                        class="custom-color-input"
+                                        class={"timer-color-input-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}
                                         type="color"
-                                        bind:value={settings.theme.backgroundCol}
-                                        oninput={() => updateColor('--background-col', settings.theme.backgroundCol)}
+                                        bind:value={settings.theme.colorTheme.backgroundCol}
+                                        oninput={() => updateColor('--background-col', settings.theme.colorTheme.backgroundCol)}
                                 />
 
                                 <input
-                                        class="custom-color-input"
+                                        class={"timer-color-input-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}
                                         type="color"
-                                        bind:value={settings.theme.primaryColor}
-                                        oninput={() => updateColor('--primary-col', settings.theme.primaryColor)}
+                                        bind:value={settings.theme.colorTheme.primaryColor}
+                                        oninput={() => updateColor('--primary-col', settings.theme.colorTheme.primaryColor)}
                                 />
 
 
                                 <input
-                                        class="custom-color-input"
+                                        class={"timer-color-input-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}
                                         type="color"
-                                        bind:value={settings.theme.secondaryColor}
-                                        oninput={() => updateColor('--secondary-col', settings.theme.secondaryColor)}
+                                        bind:value={settings.theme.colorTheme.secondaryColor}
+                                        oninput={() => updateColor('--secondary-col', settings.theme.colorTheme.secondaryColor)}
                                 />
                                 <input
-                                        class="custom-color-input"
+                                        class={"timer-color-input-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}
                                         type="color"
-                                        bind:value={settings.theme.timerSecondaryColor}
-                                        oninput={() => updateColor('--timer-background-col', settings.theme.timerSecondaryColor)}
+                                        bind:value={settings.theme.colorTheme.timerSecondaryColor}
+                                        oninput={() => updateColor('--timer-background-col', settings.theme.colorTheme.timerSecondaryColor)}
                                 />
                                 <input
-                                        class="custom-color-input"
+                                        class={"timer-color-input-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}
                                         type="color"
-                                        bind:value={settings.theme.textColor}
-                                        oninput={() => updateColor('--text-col', settings.theme.textColor)}
+                                        bind:value={settings.theme.colorTheme.textColor}
+                                        oninput={() => updateColor('--text-col', settings.theme.colorTheme.textColor)}
                                 />
 
                             </div>
@@ -436,18 +449,18 @@
 
                         <div class="flex flex-row gap-1.5 justify-between w-full items-center">
                             <div>Font:</div>
-                            <input oninput={()=>{updateColor('--font-family', settings.theme.fontFamily);}} class="parse-in w-full" type="text" bind:value={settings.theme.fontFamily}
+                            <input oninput={()=>{updateColor('--font-family', settings.theme.fontFamily);}} class={"w-full timer-input-" + settings.theme.buttonStyle+ " timer-common-" + settings.theme.buttonStyle} type="text" bind:value={settings.theme.fontFamily}
                                    placeholder="font family"/>
                         </div>
 
                         <div class="flex flex-row gap-1.5 justify-between w-full items-center">
                             <div>Preset:</div>
-                            <input class="parse-in w-full" type="text" bind:value={parseFieldValue}
+                            <input class={"w-full timer-input-" + settings.theme.buttonStyle+ " timer-common-" + settings.theme.buttonStyle} type="text" bind:value={parseFieldValue}
                                    placeholder="parse preset here"/>
                             <div class="flex flex-row gap-3 justify-between">
-                                <button onclick={copy} class="timer-button"><div class="icon copy-icon"/></button>
-                                <button onclick={()=>{parse(); parseFieldValue="";}} class="timer-button"><div class="icon select-icon"/></button>
-                                <button onclick={setToDefault} class="timer-button"><div class="icon reset-icon"/></button>
+                                <button onclick={copy} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}><div class="icon copy-icon"/></button>
+                                <button onclick={()=>{parse(); parseFieldValue="";}} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}><div class="icon select-icon"/></button>
+                                <button onclick={setToDefault} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}><div class="icon reset-icon"/></button>
                             </div>
                         </div>
 
@@ -462,7 +475,7 @@
         <!--Saves-->
         {#if isElectron}
             <div class="savesPanel settingsPanel">
-                <button onclick={toggleSavesPanel} class="timer-button" aria-label="Toggle info panel">
+                <button onclick={toggleSavesPanel} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} aria-label="Toggle info panel">
                     {#if savesVisible}
                         <div class="close-icon icon"/>
                     {:else}
@@ -475,16 +488,16 @@
 
                         <div class="flex flex-row justify-between w-full items-center gap-1.5">
                             <p> Save current: </p>
-                            <button class="timer-button" onclick={()=>{makeSave()}}><div class="icon saves-icon" /></button>
-                            <button class="timer-button" onclick={()=>{openSaveFolder()}}><div class="icon folder-icon" /></button>
+                            <button class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} onclick={()=>{makeSave()}}><div class="icon saves-icon" /></button>
+                            <button class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} onclick={()=>{openSaveFolder()}}><div class="icon folder-icon" /></button>
                         </div>
 
                         {#each files as item}
                             <div class="flex flex-row justify-between w-full items-center">
                                 <p>{item.split(".json").join("")}</p>
                                 <div class="flex flex-row gap-1.5">
-                                    <button class="timer-button" onclick={()=>loadSave(item)}><div class="icon load-icon" /></button>
-                                    <button class="timer-button" onclick={()=>deleteSave(item)} ><div class="icon delete-icon" /></button>
+                                    <button class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} onclick={()=>loadSave(item)}><div class="icon load-icon" /></button>
+                                    <button class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} onclick={()=>deleteSave(item)} ><div class="icon delete-icon" /></button>
                                 </div>
                             </div>
                         {/each}
@@ -498,7 +511,7 @@
         {#if isElectron}
             <div class="cameraSettings settingsPanel">
                 {#key cameraSettings}
-                    <button onclick={toggleCameraSettings} class="timer-button" aria-label="Toggle camera settings">
+                    <button onclick={toggleCameraSettings} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} aria-label="Toggle camera settings">
                         {#if cameraSettingsVisible}
                             <div class="close-icon icon"/>
                         {:else}
@@ -513,14 +526,14 @@
 
                             <div class="flex flex-row gap-1.5 justify-between w-full">
                                 <div>fps:</div>
-                                <input class="parse-in" type="number" bind:value={cameraSettings.fps}
+                                <input class={"timer-input-" + settings.theme.buttonStyle} type="number" bind:value={cameraSettings.fps}
                                        placeholder="FPS"/>
-                                <button onclick={changeFPS} class="timer-button"><div class="icon select-icon"></div> </button>
+                                <button onclick={changeFPS} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}><div class="icon select-icon"></div> </button>
                             </div>
 
 
                             <div class="flex flex-row">
-                                <button onclick={changeCameraState} class="timer-button">
+                                <button onclick={changeCameraState} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}>
                                     {#if cameraSettings.enabled}
                                         Disable
                                     {:else}
@@ -539,7 +552,7 @@
 
         <!--Info-->
         <div class:cameraSettings={!isElectron} class:infoPanel={isElectron} class="settingsPanel">
-            <button onclick={toggleInfoPanel} class="timer-button" aria-label="Toggle info panel">
+            <button onclick={toggleInfoPanel} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} aria-label="Toggle info panel">
                 {#if infoVisible}
                     <div class="close-icon icon"/>
                 {:else}
@@ -610,27 +623,27 @@
                     </div>
                 </div>
                 <nav class="flex flex-row">
-                    <button onclick={onTimerButtonClick} class="timer-button">{#if progress}
+                    <button onclick={onTimerButtonClick} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}>{#if progress}
                         <div class="icon pause-icon"/>
                     {:else}
                         <div class="icon play-icon"/>
                     {/if} </button>
-                    <button onclick={onResetButtonClick} class="timer-button"><div class="icon reset-icon"/></button>
-                    <button onclick={onFullResetButtonClick} class="timer-button"><div class="icon full-reset-icon"/></button>
+                    <button onclick={onResetButtonClick} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}><div class="icon reset-icon"/></button>
+                    <button onclick={onFullResetButtonClick} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}><div class="icon full-reset-icon"/></button>
                     <div class="flex">
-                        <button onclick={()=>changeTimerStage(-1)} class="timer-button">
+                        <button onclick={()=>changeTimerStage(-1)} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}>
                             <div class="icon left-arrow-icon"/>
                         </button>
-                        <button onclick={()=>changeTimerStage(1)} class="timer-button">
+                        <button onclick={()=>changeTimerStage(1)} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}>
                             <div class="icon right-arrow-icon"/>
                         </button>
                     </div>
                     <div class="flex">
-                        <input class="delta-input text-4xl" type="number" bind:value={deltaTime}/>
-                        <button onclick={()=>changeTimerTime(deltaTime)} class="timer-button">
+                        <input class={"delta-input text-4xl timer-input-" + settings.theme.buttonStyle+ " timer-common-" + settings.theme.buttonStyle} type="number" bind:value={deltaTime}/>
+                        <button onclick={()=>changeTimerTime(deltaTime)} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}>
                             <div class="icon plus-icon"/>
                         </button>
-                        <button onclick={()=>changeTimerTime(-deltaTime)} class="timer-button">
+                        <button onclick={()=>changeTimerTime(-deltaTime)} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}>
                             <div class="icon minus-icon"/>
                         </button>
                     </div>
@@ -644,6 +657,9 @@
 </main>
 
 <style>
+
+    /*@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');*/
+
 
     .input-name {
         background: var(--background-col);
@@ -686,6 +702,7 @@
 
     .cameraSettingsBody {
         right: 0;
+        width: 450px;
     }
 
     .infoSettingsBody {
@@ -742,9 +759,6 @@
     }
 
     .delta-input {
-        background: var(--primary-col);
-        border: 5px solid var(--secondary-col);
-        border-radius: 8px;
         width: 140px;
     }
 
@@ -789,22 +803,4 @@
         gap: 40px;
     }
 
-    .parse-in {
-        background: var(--primary-col);
-        border: 5px solid var(--secondary-col);
-        border-radius: 10px;
-    }
-
-
-
-    select {
-        font-size: 18px;
-        padding: 5px;
-        border-radius: 10px;
-        width: 120px;
-        /* Add your theme colors */
-        background: var(--primary-col);
-        color: var(--text-col);
-        border: 5px solid var(--secondary-col);
-    }
 </style>

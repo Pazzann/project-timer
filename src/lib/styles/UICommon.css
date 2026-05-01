@@ -1,0 +1,9 @@
+.timer-common-default{
+    background: var(--primary-col);
+    border: 5px solid var(--secondary-col);
+}
+
+.timer-common-minimal{
+    background: transparent;
+    border: none;
+}

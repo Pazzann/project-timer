@@ -8,6 +8,7 @@ pnpm-debug.log*
 lerna-debug.log*
 yarn.lock
 package-lock.json
+vite.config.ts.*
 
 # app cache
 saves
@@ -16,6 +17,7 @@ node_modules
 dist
 dist-ssr
 *.local
+
 
 # Editor directories and files
 .vscode/*
@@ -26,5 +28,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+.claude
 
 /Output/
