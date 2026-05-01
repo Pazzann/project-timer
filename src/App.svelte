@@ -3,6 +3,8 @@
     import RadialTimer from "./lib/components/RadialTimer.svelte";
     import LinearTimer from "./lib/components/LinearTimer.svelte";
     import NumberTimer from "./lib/components/NumberTimer.svelte";
+    import BlocksTimer from "./lib/components/BlocksTimer.svelte";
+    import WaveTimer from "./lib/components/WaveTimer.svelte";
 
     import {MsToTime} from "./lib/functions/MsToTime";
     import {SortableList} from '@jhubbardsf/svelte-sortablejs';
@@ -33,6 +35,42 @@
 
     let useCustomCSS: boolean = $state(false);
     let fontString: string = $state("");
+    let lastPublishedVersion: string = $state(getDefaultSettings().appVersion);
+
+    interface LatestVersion {
+        name: string;
+        html_url: string;
+    }
+    async function getLatestVersion() : Promise<LatestVersion> {
+        const url = `https://api.github.com/repos/Pazzann/project-timer/releases/latest`;
+
+        try {
+            const response = await fetch(url, {
+                headers: {
+                    // 'Authorization': 'Bearer YOUR_GITHUB_TOKEN', // Optional: Add if you hit rate limits
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+
+            if (!response.ok) {
+                if (response.status === 404) {
+                    throw new Error("No releases found for this repository.");
+                }
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log("Latest release data:", data);
+            // The tag_name usually holds the version number (e.g., "v1.0.0" or "16.14.0")
+            return data;
+
+        } catch (error: any) {
+            console.error("Failed to fetch latest release:", error?.message);
+            return {name: "unknown", html_url: "about:blank"};
+        }
+    }
+
+    getLatestVersion();
 
 
 
@@ -145,7 +183,7 @@
     // settings updates
     //
     let parseFieldValue: string = $state("");
-    let timerTypePresets: TimerType[] = ["radial", "linear", "number"];
+    let timerTypePresets: TimerType[] = ["radial", "linear", "number", "blocks", "wave"];
 
     function copy() {
         navigator.clipboard.writeText(JSON.stringify(settings));
@@ -154,6 +192,29 @@
     function parse(value: string = parseFieldValue) {
         try{
             let parsedSettings: Settings = JSON.parse(value);
+
+            //TODO: CHECK BEFORE EVERY UPDATE
+            //application version translator from 1.0.0 to
+            if(parsedSettings?.appVersion === undefined){
+                //@ts-ignore
+                parsedSettings.theme.colorTheme = {
+                    //@ts-ignore
+                    backgroundCol: parsedSettings.theme?.backgroundCol ?? getDefaultSettings().theme.colorTheme.backgroundCol,
+                    //@ts-ignore
+                    primaryColor: parsedSettings.theme?.primaryColor ?? getDefaultSettings().theme.colorTheme.primaryColor,
+                    //@ts-ignore
+                    secondaryColor: parsedSettings.theme?.secondaryColor ?? getDefaultSettings().theme.colorTheme.secondaryColor,
+                    //@ts-ignore
+                    timerSecondaryColor: parsedSettings.theme?.timerSecondaryColor ?? getDefaultSettings().theme.colorTheme.timerSecondaryColor,
+                    //@ts-ignore
+                    textColor: parsedSettings.theme?.textColor ?? getDefaultSettings().theme.colorTheme.textColor,
+                };
+                parsedSettings.theme.iconPack = "default";
+                parsedSettings.theme.buttonStyle = "default";
+                parsedSettings.deltaTime = 10000;
+                parsedSettings.deltaTimeShowSetting = "ms";
+                parsedSettings.appVersion = getDefaultSettings().appVersion;
+            }
 
             for (let i = 0; i < parsedSettings.stages.length; i++) {
                 parsedSettings.stages[i].index = i;
@@ -293,7 +354,23 @@
     }
 
     function changeTimerTime(dt: number) {
-        settings.currentStageTime += dt;
+        let multiplier = 1;
+        switch (settings.deltaTimeShowSetting)
+        {
+            case "h":
+                multiplier = 3600000;
+                break;
+            case "m":
+                multiplier = 60000;
+                break;
+            case "s":
+                multiplier = 1000;
+                break;
+            case "ms":
+                multiplier = 10;
+                break;
+        }
+        settings.currentStageTime += multiplier * dt;
         if (settings.currentStageTime < 0) {
             settings.currentStageTime = 0;
         }
@@ -582,7 +659,23 @@
                     </div>
                     <div class="flex flex-row justify-between w-full items-center">
                         <p>Version: </p>
-                        <p>1.0.0</p>
+                        <p>{getDefaultSettings().appVersion}</p>
+                    </div>
+                    <div class="flex flex-row justify-between w-full items-center">
+                        <p>Latest Version: </p>
+                        {#await getLatestVersion()}
+                            <p>Loading...</p>
+                        {:then latest}
+                            {#if latest.name !== "unknown" && latest.name !== getDefaultSettings().appVersion}
+                                <a target="_blank" href={latest.html_url}>{latest.name}(Update!)</a>
+                            {:else if latest.name === getDefaultSettings().appVersion}
+                                <a target="_blank" href={latest.html_url}>{latest.name}</a>
+                            {:else}
+                                <p>Failed to fetch</p>
+                            {/if}
+                        {:catch error}
+                            <p>Error</p>
+                        {/await}
                     </div>
                     <div class="flex flex-row justify-between w-full items-center">
                         <p>Developed by: </p>
@@ -612,6 +705,10 @@
                         <LinearTimer settings={settings}></LinearTimer>
                     {:else if settings.theme.timerType === "number"}
                         <NumberTimer settings={settings}></NumberTimer>
+                    {:else if settings.theme.timerType === "blocks"}
+                        <BlocksTimer settings={settings}></BlocksTimer>
+                    {:else if settings.theme.timerType === "wave"}
+                        <WaveTimer settings={settings}></WaveTimer>
                     {/if}
 
                     <div class="stages-body flex flex-col justify-center content-center gap-1.5">
@@ -652,11 +749,17 @@
                         </button>
                     </div>
                     <div class="flex">
-                        <input class={"delta-input text-4xl timer-input-" + settings.theme.buttonStyle+ " timer-common-" + settings.theme.buttonStyle} type="number" bind:value={deltaTime}/>
-                        <button onclick={()=>changeTimerTime(deltaTime)} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}>
+                        <input class={"delta-input text-4xl timer-input-" + settings.theme.buttonStyle+ " timer-common-" + settings.theme.buttonStyle} type="number" bind:value={settings.deltaTime}/>
+                        <select class={"delta-select timer-select-" + settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} bind:value={settings.deltaTimeShowSetting}>
+                            <option value="h">h</option>
+                            <option value="m">m</option>
+                            <option value="s">s</option>
+                            <option value="ms">ms</option>
+                        </select>
+                        <button onclick={()=>changeTimerTime(settings.deltaTime)} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}>
                             <div class="icon plus-icon"/>
                         </button>
-                        <button onclick={()=>changeTimerTime(-deltaTime)} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}>
+                        <button onclick={()=>changeTimerTime(-settings.deltaTime)} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}>
                             <div class="icon minus-icon"/>
                         </button>
                     </div>
@@ -766,11 +869,14 @@
     }
 
     .delta-input {
-        width: 140px;
+        width: 72px;
+    }
+    .delta-select{
+        width: 60px;
     }
 
     main {
-        margin: 10px;
+        margin: 5px;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -800,14 +906,18 @@
         overflow-wrap: break-word;
     }
 
+
     .main-body {
-        width: calc(var(--progress-bar-width) * 2);
+        /*width: calc(var(--progress-bar-width) * 2);*/
+        margin: 0;
         position: relative;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         gap: 40px;
+        width: 850px;
+        height: 640px;
     }
 
 </style>

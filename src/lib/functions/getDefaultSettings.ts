@@ -17,8 +17,11 @@ const defaultSettings: Settings = {
 
     ],
     showSettings: ["h", "m", "s", "ms"],
+    deltaTime: 100,
+    deltaTimeShowSetting: "ms",
     currentStageTime: 0,
-    activeStage: 0
+    activeStage: 0,
+    appVersion: "2.0.0"
 }
 
 export function getDefaultSettings() {

@@ -32,6 +32,11 @@
     background-color: transparent;
     border: none;
 }
+.timer-color-input-glass.timer-common-glass{
+    /* Make the input element itself transparent */
+    background-color: transparent;
+    border: none;
+}
 
 /* Style the actual color swatch */
 .timer-color-input-default::-webkit-color-swatch {

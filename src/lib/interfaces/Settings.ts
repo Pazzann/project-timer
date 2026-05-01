@@ -1,5 +1,6 @@
 import type Theme from "./Theme";
 import type Stage from "./Stage";
+import type {TimeType} from "../types/TimeType";
 
 export default interface Settings {
     name: string;
@@ -7,6 +8,12 @@ export default interface Settings {
     theme: Theme;
     activeStage: number;
     currentStageTime: number;
-    showSettings: string[];
+
+    showSettings: TimeType[];
+    deltaTime: number;
+    deltaTimeShowSetting: TimeType;
+
+
+    appVersion: string;
 }
 

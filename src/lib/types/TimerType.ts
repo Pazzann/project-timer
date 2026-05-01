@@ -1,1 +1,1 @@
-export type TimerType = "radial" | "number" | "linear";
+export type TimerType = "radial" | "number" | "linear" | "blocks" | "wave";

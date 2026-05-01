@@ -23,18 +23,14 @@
 
 </script>
 
-<div  bind:this={progressBar} class="circular-progress" data-inner-circle-color="lightgrey" data-progress-color="crimson" data-bg-color="black">
-    <!--<div  class="inner-circle"></div>-->
+<div bind:this={progressBar} class="circular-progress timer-style-{settings.theme.buttonStyle}">
     <div class="percentage text-5xl font-bold">
         <p>{MsToTime(settings.currentStageTime, settings.showSettings)}</p>
         <p>{MsToTime(settings.stages[settings.activeStage].time, settings.showSettings)}</p>
     </div>
-
 </div>
 
 <style>
-
-
     .circular-progress {
         width: var(--progress-bar-width);
         height: var(--progress-bar-height);
@@ -48,8 +44,18 @@
         display: flex;
         flex-direction: column;
         position: relative;
-        color: rgb(0, 0, 0, 0.8);
+        color: var(--text-col);
     }
 
+    .timer-style-retro .percentage {
+        text-shadow: 0 0 8px var(--secondary-col), 0 0 20px var(--secondary-col);
+    }
 
+    .timer-style-neumorphism .percentage {
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.3), -1px -1px 3px rgba(255,255,255,0.1);
+    }
+
+    .timer-style-glass .percentage {
+        text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
 </style>

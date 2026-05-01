@@ -3,6 +3,7 @@
     import {onMount} from "svelte";
     import type Stage from "../interfaces/Stage";
     import "../styles/Icons.css";
+    import "../styles/Panel.css";
     import type {StageType} from "../types/StageTypes";
     import type Theme from "../interfaces/Theme";
 
@@ -21,7 +22,7 @@
 </script>
 
 
-<div class="stage-body flex flex-row justify-between gap-0.5">
+<div class={"stage-body flex flex-row justify-between gap-0.5 timer-panel-" + theme.buttonStyle}>
     <p class="w-full text-center justify-center flex content-center text-4xl h-auto items-center">{+item.index + 1}.</p>
     <input class={"input-stage"+ " timer-input-"+theme.buttonStyle + " timer-common-" + theme.buttonStyle} type="text" oninput={()=>{item.id = name;}} bind:value={name}/>
     <input class={"input-stage"+ " timer-input-"+theme.buttonStyle + " timer-common-" + theme.buttonStyle} type="number" oninput={()=>{item.time = time}} bind:value={time}/>
@@ -38,10 +39,8 @@
 <style>
 
     .stage-body{
-        border-radius: 10px;
         width: 100%;
         padding: 2px;
-        border: 5px solid var(--secondary-col);
     }
 
     .input-stage{

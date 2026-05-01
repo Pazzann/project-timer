@@ -1,126 +1,142 @@
-//TODO: FIX
-
-
 <script lang="ts">
     import { MsToTime } from "../functions/MsToTime";
     import type Settings from "../interfaces/Settings";
-    import FlipDigit from "./FlipDigit.svelte";
 
     let { settings }: { settings: Settings } = $props();
 
     const stage = $derived(settings.stages?.[settings.activeStage]);
     const currentTime = $derived(settings.currentStageTime);
+    const isOvertime = $derived(stage ? currentTime >= stage.time : false);
+    const flashOn = $derived(isOvertime && currentTime % 1000 > 500);
 
-    const timeStrings = $derived((() => {
-        if (!stage) {
-            return { current: [], total: [] };
-        }
+    const currentTimeStr = $derived(stage ? MsToTime(currentTime, settings.showSettings) : '');
+    const totalTimeStr = $derived(stage ? MsToTime(stage.time, settings.showSettings) : '');
 
-        const totalTime = stage.time;
-        const newTimeStr = MsToTime(currentTime, settings.showSettings);
-        const newTimeArr = newTimeStr.split('');
-        const totalTimeStr = MsToTime(totalTime, settings.showSettings);
-        const totalTimeArr = totalTimeStr.split('');
-
-        return {
-            current: newTimeArr,
-            total: totalTimeArr,
-        };
-    })());
-
-    let previousTimeStrings = $state.raw(timeStrings);
-
-    $effect(() => {
-        // The effect's cleanup function runs right before the effect re-runs.
-        // This means we can capture the "current" value of timeStrings just before it changes.
-        return () => {
-            previousTimeStrings = timeStrings;
-        };
-    });
-
-    const showOvertime = $derived(stage && currentTime >= stage.time && (currentTime % 1000 > 500));
-
+    function isDigit(c: string) {
+        return c >= '0' && c <= '9';
+    }
 </script>
 
 {#if stage}
-<div class="neon-timer" class:overtime-flash={showOvertime}>
-    <div class="flip-clock">
-        {#each timeStrings.current as char, i}
-            {#if char === ':'}
-                <div class="colon">:</div>
+<div class="number-timer timer-style-{settings.theme.buttonStyle}" class:overtime={flashOn}>
+    <div class="time-row main-time">
+        {#each currentTimeStr.split('') as char}
+            {#if isDigit(char)}
+                <span class="digit">{char}</span>
             {:else}
-                <FlipDigit
-                        char={char}
-                        previousChar={previousTimeStrings.current[i] || char}
-                />
+                <span class="separator">{char}</span>
             {/if}
         {/each}
     </div>
-
-    <div class="flip-clock total-time">
-        {#each timeStrings.total as char, i}
-            {#if char === ':'}
-                <div class="colon">:</div>
+    <div class="time-row total-row">
+        {#each totalTimeStr.split('') as char}
+            {#if isDigit(char)}
+                <span class="digit small">{char}</span>
             {:else}
-                <FlipDigit char={char} previousChar={previousTimeStrings.total[i] || char} />
+                <span class="separator small">{char}</span>
             {/if}
         {/each}
     </div>
 </div>
 {/if}
 
-
-
 <style>
-    .neon-timer {
+    .number-timer {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 10px;
+        gap: 16px;
+        padding: 16px;
     }
 
-    .flip-clock {
+    .time-row {
         display: flex;
-        gap: 8px; /* Gap between digits */
+        gap: 4px;
+        align-items: center;
+        font-family: 'Courier New', Courier, monospace;
+        font-weight: bold;
+        line-height: 1;
+    }
+
+    .main-time { font-size: 60px; }
+    .total-row { font-size: 28px; opacity: 0.65; }
+
+    .digit {
+        display: inline-flex;
         align-items: center;
         justify-content: center;
-    }
-
-    .colon {
-        font-family: 'Courier New', Courier, monospace;
-        font-size: 60px;
-        font-weight: bold;
+        min-width: 0.75em;
+        padding: 0.08em 0.18em;
+        background: var(--primary-col);
         color: var(--text-col);
-        /* Neon glow effect */
+        border: 2px solid var(--secondary-col);
+        border-radius: 6px;
+        transition: background 0.1s linear, color 0.1s linear, box-shadow 0.1s linear, border-color 0.1s linear;
+    }
+
+    .digit.small {
+        border-width: 1px;
+        border-radius: 3px;
+        padding: 0.05em 0.12em;
+    }
+
+    .separator {
+        color: var(--text-col);
+        padding: 0 0.05em;
+    }
+
+    /* --- Per-theme overrides --- */
+    .timer-style-minimal .digit {
+        border: none;
+        background: transparent;
+        padding: 0 0.1em;
+    }
+
+    .timer-style-material .digit {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .timer-style-glass .digit {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 10px;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .timer-style-neumorphism .digit {
+        border: none;
+        border-radius: 12px;
+        box-shadow:
+            4px 4px 10px rgba(0, 0, 0, 0.25),
+            -4px -4px 10px rgba(255, 255, 255, 0.07);
+    }
+
+    .timer-style-retro .digit {
+        border: 2px solid var(--secondary-col);
+        border-radius: 0;
+        box-shadow:
+            0 0 8px var(--secondary-col),
+            inset 0 0 12px rgba(0, 0, 0, 0.35);
         text-shadow:
-                0 0 5px var(--text-col),
-                0 0 15px var(--secondary-col),
-                0 0 25px var(--secondary-col);
-
-        /* Align with the flipping digits */
-        line-height: 1;
-        padding-bottom: 10px; /* Manual alignment */
-        transition: color 0.1s;
+            0 0 4px var(--text-col),
+            0 0 12px var(--secondary-col),
+            0 0 24px var(--secondary-col);
     }
 
-    /* Style for the smaller total-time clock */
-    .total-time {
-        transform: scale(0.5); /* Make it half size */
-        opacity: 0.7;
+    .timer-style-retro .separator {
+        text-shadow:
+            0 0 4px var(--text-col),
+            0 0 12px var(--secondary-col),
+            0 0 24px var(--secondary-col);
     }
 
-    /* --- Overtime Flash Effect --- */
-    /* This overrides the colors in FlipDigit.svelte */
-    .overtime-flash .colon {
-        color: var(--timer-background-col);
-        text-shadow: none;
-    }
-
-    .overtime-flash :global(.digit-card) {
+    /* Overtime flash */
+    .number-timer.overtime .digit {
+        background: var(--timer-background-col);
         border-color: var(--timer-background-col);
-    }
-    .overtime-flash :global(.digit-card span) {
-        color: var(--timer-background-col);
-        text-shadow: none;
     }
 </style>
