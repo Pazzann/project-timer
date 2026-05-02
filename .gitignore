@@ -8,6 +8,8 @@ pnpm-debug.log*
 lerna-debug.log*
 yarn.lock
 package-lock.json
+.claude
+vite.config.ts.*
 
 # app cache
 saves
