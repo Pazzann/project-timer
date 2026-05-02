@@ -192,6 +192,8 @@
                         overlapBehaviour: parsedSettings?.type ?? "allow-overlap",
                         canGoNegative: false
                     }
+                    //@ts-ignore
+                    parsedSettings.stages[i].title = parsedSettings.stages[i]?.id;
                 }
             }
 
