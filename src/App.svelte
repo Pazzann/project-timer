@@ -19,6 +19,14 @@
     import {getDefaultSettings} from "./lib/functions/getDefaultSettings";
     import type ColorTheme from "./lib/interfaces/ColorTheme";
     import {getColorThemes} from "./lib/functions/getColorThemes";
+    import {
+        isElectronEnv,
+        listSaves,
+        readSave,
+        writeSave,
+        deleteSave as deleteSaveStorage,
+        openSavesLocation,
+    } from "./lib/functions/savesStorage";
 
 
     import TimerLogo from "./lib/icons/ProjectTimerLogo.png";
@@ -83,50 +91,48 @@
 
 
 
-    let isElectron: boolean = $state(false);
+    let isElectron: boolean = $state(isElectronEnv);
     let files: string[] = $state([]);
 
-    if (window?.api && window?.api.isElectron) {
-        isElectron = true;
-        readSaves();
-        if(files.includes("last_close.json")){
-            loadSave("last_close.json");
-        } else if(files.length > 0){
-            loadSave(files[files.length - 1]);
-        }
-        window.addEventListener('beforeunload', (event) => {
-            makeSave("last_close");
-        });
-    } else {
-        isElectron = false;
+    // Boot: load saves index, restore last session if present
+    readSaves();
+    if (files.includes("last_close.json")) {
+        loadSave("last_close.json");
+    } else if (files.length > 0) {
+        loadSave(files[files.length - 1]);
     }
+    window.addEventListener('beforeunload', () => {
+        makeSave("last_close");
+    });
 
     function readSaves(){
-        files = window.api.fs.readdir().filter(file => file.endsWith(".json"));
+        files = listSaves();
     }
 
     function loadSave(fileName: string){
-        readSaves()
+        readSaves();
         if(!files.includes(fileName)){
             return;
         }
-        let fileContent: string = window.api.fs.readFile(fileName) as string;
-        parse(fileContent)
+        const fileContent = readSave(fileName);
+        if (fileContent != null) {
+            parse(fileContent);
+        }
     }
 
     function deleteSave(fileName: string){
-        window.api.fs.removeFile(fileName);
+        deleteSaveStorage(fileName);
         readSaves();
     }
 
     function makeSave(saveName=settings.name){
         let fileName = saveName.split(" ").join("_") + ".json";
-        window.api.fs.writeFile(fileName, JSON.stringify(settings));
+        writeSave(fileName, JSON.stringify(settings));
         readSaves();
     }
 
     function openSaveFolder(){
-        window.api.openSaves();
+        openSavesLocation();
     }
 
     //
@@ -583,7 +589,7 @@
         </div>
 
         <!--Saves-->
-        {#if isElectron}
+        <!--{#if isElectron}-->
             <div class="savesPanel settingsPanel">
                 <button onclick={toggleSavesPanel} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} aria-label="Toggle info panel">
                     {#if savesVisible}
@@ -614,7 +620,7 @@
                     </div>
                 {/if}
             </div>
-        {/if}
+        <!--{/if}-->
 
 
         <!--Camera-->
