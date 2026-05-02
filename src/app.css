@@ -25,6 +25,11 @@ body {
     overflow: hidden;
 }
 
+/* Set scrollbar-width globally */
+html * {
+    scrollbar-width: thin;
+}
+
 :root {
   --background-col: #1a1a2e;
   --secondary-col: #16213e;
