@@ -12,9 +12,9 @@ const defaultSettings: Settings = {
     },
     name: "Default Timer",
     stages: [
-        {id: "Default1", time: 15000, index: 0, settings:{overlapBehaviour: "allow-overlap", canGoNegative: false}},
-        {id: "Default2", time: 15000, index: 1, settings:{overlapBehaviour: "allow-overlap", canGoNegative: false}},
-        {id: "Default3", time: 5000,  index: 2, settings:{overlapBehaviour: "allow-overlap", canGoNegative: false}},
+        {title: "Default1", time: 15000, index: 0, settings:{overlapBehaviour: "allow-overlap", canGoNegative: false}},
+        {title: "Default2", time: 15000, index: 1, settings:{overlapBehaviour: "allow-overlap", canGoNegative: false}},
+        {title: "Default3", time: 5000,  index: 2, settings:{overlapBehaviour: "allow-overlap", canGoNegative: false}},
 
     ],
     showSettings: ["h", "m", "s", "ms"],

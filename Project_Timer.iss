@@ -3,13 +3,13 @@
 ; Non-commercial use only
 
 #define MyAppName "Project Timer"
-#define MyAppVersion "2.0.0"
+#define MyAppVersion "2.0.1"
 #define MyAppExeName "Project Timer.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{9E423CB5-15C4-46B9-8D24-75E013E0D370}
+AppId=9E423CB5-15C4-46B9-8D24-75E013E0D370
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}

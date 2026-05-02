@@ -40,55 +40,18 @@
     import "./lib/styles/Input.css";
     import "./lib/styles/Select.css";
     import "./lib/styles/Panel.css";
-    import {onDestroy, onMount} from "svelte";
+
     import getDefaultStage from "./lib/functions/getDefaultStage";
+    import getLatestVersion from "./lib/functions/getLatestVersion";
     
 
+    //TODO: IMPLEMENT
     let useCustomCSS: boolean = $state(false);
     let fontString: string = $state("");
-    let lastPublishedVersion: string = $state(getDefaultSettings().appVersion);
-
-    interface LatestVersion {
-        name: string;
-        html_url: string;
-    }
-    async function getLatestVersion() : Promise<LatestVersion> {
-        const url = `https://api.github.com/repos/Pazzann/project-timer/releases/latest`;
-
-        try {
-            const response = await fetch(url, {
-                headers: {
-                    // 'Authorization': 'Bearer YOUR_GITHUB_TOKEN', // Optional: Add if you hit rate limits
-                    'Accept': 'application/vnd.github.v3+json'
-                }
-            });
-
-            if (!response.ok) {
-                if (response.status === 404) {
-                    throw new Error("No releases found for this repository.");
-                }
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            console.log("Latest release data:", data);
-            // The tag_name usually holds the version number (e.g., "v1.0.0" or "16.14.0")
-            return data;
-
-        } catch (error: any) {
-            console.error("Failed to fetch latest release:", error?.message);
-            return {name: "unknown", html_url: "about:blank"};
-        }
-    }
-
-    getLatestVersion();
-
 
 
     // main variables
     let settings: Settings = $state(getDefaultSettings());
-
-
 
 
     let isElectron: boolean = $state(isElectronEnv);
@@ -230,6 +193,16 @@
                         canGoNegative: false
                     }
                 }
+            }
+
+            if(parsedSettings?.appVersion === "2.0.0")
+            {
+                for (let i = 0; i < parsedSettings.stages.length; i++) {
+                    //@ts-ignore
+                    parsedSettings.stages[i].title = parsedSettings.stages[i]?.id;
+                }
+
+                parsedSettings.appVersion = getDefaultSettings().appVersion;
             }
 
             for (let i = 0; i < parsedSettings.stages.length; i++) {
@@ -642,7 +615,7 @@
 
                             <div class="flex flex-row gap-1.5 justify-between w-full">
                                 <div>fps:</div>
-                                <input class={"timer-input-" + settings.theme.buttonStyle} type="number" bind:value={cameraSettings.fps}
+                                <input class={"timer-input-" + settings.theme.buttonStyle+ " timer-common-" + settings.theme.buttonStyle} type="number" bind:value={cameraSettings.fps}
                                        placeholder="FPS"/>
                                 <button onclick={changeFPS} class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle}><div class={"icon icon-" + settings.theme.iconPack + " select-icon"}></div> </button>
                             </div>
@@ -741,20 +714,20 @@
 
                     <div class="stages-body flex flex-col justify-center content-center gap-1.5">
                         <div class="stage-first-line flex text-center overflow-hidden flex-col-reverse text-2xl">
-                            {#each settings.stages.filter((item, index) => index < settings.activeStage).reverse() as item, i (item.id)}
-                                <p transition:scale>{item.id}   {MsToTime(item.time, settings.showSettings)}</p>
+                            {#each settings.stages.filter((item, index) => index < settings.activeStage).reverse() as item, i (item.index)}
+                                <p transition:scale>{item.title}   {MsToTime(item.time, settings.showSettings)}</p>
                             {/each}
                         </div>
 
-                        {#key settings.stages[settings.activeStage].id}
+                        {#key settings.stages[settings.activeStage].title}
                             <div in:scale
-                                 class="sel-stage text-6xl font-bold text-center">{settings.stages[settings.activeStage].id}</div>
+                                 class="sel-stage text-6xl font-bold text-center">{settings.stages[settings.activeStage].title}</div>
                         {/key}
 
                         <div class="stage-last-line flex-col text-center overflow-hidden text-2xl">
-                            {#each settings.stages as item, i (item.id)}
+                            {#each settings.stages as item, i (item.index)}
                                 {#if i > settings.activeStage}
-                                    <p transition:scale>{item.id}   {MsToTime(item.time, settings.showSettings)}</p>
+                                    <p transition:scale>{item.title}   {MsToTime(item.time, settings.showSettings)}</p>
                                 {/if}
                             {/each}
                         </div>

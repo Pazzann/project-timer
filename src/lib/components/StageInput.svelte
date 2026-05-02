@@ -12,7 +12,7 @@
     let time = $state(0);
 
     onMount(()=> {
-        name = item.id;
+        name = item.title;
         time = item.time;
     });
 
@@ -26,7 +26,7 @@
 <div class={"stage-body flex flex-col timer-panel-" + theme.buttonStyle}>
     <div class={" flex flex-row justify-between gap-0.5"}>
         <p class="w-full text-center justify-center flex content-center text-4xl h-auto items-center">{+item.index + 1}.</p>
-        <input class={"input-stage"+ " timer-input-"+theme.buttonStyle + " timer-common-" + theme.buttonStyle} type="text" oninput={()=>{item.id = name;}} bind:value={name}/>
+        <input class={"input-stage"+ " timer-input-"+theme.buttonStyle + " timer-common-" + theme.buttonStyle} type="text" oninput={()=>{item.title = name;}} bind:value={name}/>
         <input class={"input-stage-time"+" timer-input-"+theme.buttonStyle + " timer-common-" + theme.buttonStyle} type="number" oninput={()=>{item.time = time}} bind:value={time}/>
         <button onclick={()=>deleteStage(item.index)} class={"timer-button-"+theme.buttonStyle + " timer-common-" + theme.buttonStyle}><div class={"icon icon-" + theme.iconPack + " delete-icon"}/></button>
         <button onclick={()=>advancedVisible = !advancedVisible} class={"timer-button-"+theme.buttonStyle + " timer-common-" + theme.buttonStyle}><div class:flip-y={advancedVisible} class={"icon icon-" + theme.iconPack + " expand-icon"}/></button>
