@@ -439,6 +439,8 @@
                                         animation={150}
                                         forceFallback={true}
                                         swapThreshold={0.65}
+                                        filter="input, select, textarea, button, .icon, [contenteditable=true]"
+                                        preventOnFilter={false}
                                 >
 
                                     {#each settings.stages as item}

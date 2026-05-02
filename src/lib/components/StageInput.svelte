@@ -62,6 +62,32 @@
     .stage-body{
         width: 100%;
         padding: 2px;
+        cursor: grab;
+    }
+
+    /* Inputs inside the stage keep their native cursor (text-edit, pointer, etc.) */
+    .stage-body :global(input),
+    .stage-body :global(select),
+    .stage-body :global(textarea),
+    .stage-body :global(button),
+    .stage-body :global(.icon) {
+        cursor: auto;
+    }
+    .stage-body :global(button),
+    .stage-body :global(.icon) {
+        cursor: pointer;
+    }
+    .stage-body :global(input[type="text"]),
+    .stage-body :global(input[type="number"]),
+    .stage-body :global(textarea) {
+        cursor: text;
+    }
+
+    /* While SortableJS is actively dragging this stage */
+    :global(.sortable-chosen) .stage-body,
+    :global(.sortable-drag) .stage-body,
+    .stage-body:active {
+        cursor: grabbing;
     }
     .flip-y {
         transform: scaleY(-1);
