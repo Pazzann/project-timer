@@ -735,7 +735,7 @@
 
                     <div class="stages-body flex flex-col justify-center content-center gap-1.5">
                         <div class="stage-first-line flex text-center overflow-hidden flex-col-reverse text-2xl">
-                            {#each settings.stages.filter((item, index) => index < settings.activeStage).reverse() as item, i}
+                            {#each settings.stages.filter((item, index) => index < settings.activeStage).reverse() as item, i (item.id)}
                                 <p transition:scale>{item.id}   {MsToTime(item.time, settings.showSettings)}</p>
                             {/each}
                         </div>
@@ -746,7 +746,7 @@
                         {/key}
 
                         <div class="stage-last-line flex-col text-center overflow-hidden text-2xl">
-                            {#each settings.stages as item, i}
+                            {#each settings.stages as item, i (item.id)}
                                 {#if i > settings.activeStage}
                                     <p transition:scale>{item.id}   {MsToTime(item.time, settings.showSettings)}</p>
                                 {/if}
