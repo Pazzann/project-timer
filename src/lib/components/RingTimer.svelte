@@ -6,21 +6,31 @@
 
     let {settings}: {settings: Settings} = $props();
 
+    const isNegative = $derived(settings.currentStageTime < 0);
+
     $effect(() => {
-        if(overTime){
-            if (settings.currentStageTime % 1000 > 500){
+        const stageTime = settings.stages[settings.activeStage].time;
+        const t = settings.currentStageTime;
+
+        if (isNegative) {
+            // Drain: starts full at t=0, empties as t -> -stageTime
+            const drainProgress = Math.max(0, Math.min(1, 1 + t / stageTime)); // 1 -> 0
+            const filledDeg = drainProgress * 360;
+            progressBar.style.background = `conic-gradient(var(--text-col) ${filledDeg}deg, var(--timer-background-col) 0deg)`;
+        } else if(overTime){
+            if (t % 1000 > 500){
                 progressBar.style.background = `var(--timer-background-col)`;
             }else {
                 progressBar.style.background = `var(--secondary-col)`;
             }
         }else{
-            progressBar.style.background = `conic-gradient(var(--timer-background-col) ${(settings.currentStageTime%settings.stages[settings.activeStage].time)/settings.stages[settings.activeStage].time * 360}deg,var(--secondary-col) 0deg)`;
+            progressBar.style.background = `conic-gradient(var(--timer-background-col) ${(t%stageTime)/stageTime * 360}deg,var(--secondary-col) 0deg)`;
         }
-        overTime = settings.currentStageTime >= settings.stages[settings.activeStage].time;
+        overTime = t >= stageTime;
     });
 </script>
 
-<div class="ring-wrapper timer-style-{settings.theme.buttonStyle}">
+<div class="ring-wrapper timer-style-{settings.theme.buttonStyle}" class:negative={isNegative}>
     <div bind:this={progressBar} class="circular-progress"></div>
     <div class="inner-circle">
         <div class="percentage text-5xl font-bold">
@@ -120,5 +130,26 @@
             0 0 6px var(--secondary-col),
             0 0 14px var(--secondary-col);
         font-family: 'Courier New', Courier, monospace;
+    }
+
+    /* Negative state — text shifts to primary, ring drains in text-col */
+    .ring-wrapper.negative .percentage,
+    .ring-wrapper.negative .percentage p {
+        color: var(--primary-col);
+        text-shadow: none;
+    }
+
+    .ring-wrapper.negative.timer-style-retro .inner-circle {
+        border-color: var(--text-col);
+        box-shadow:
+            0 0 12px var(--text-col),
+            inset 0 0 18px rgba(0, 0, 0, 0.4);
+    }
+
+    .ring-wrapper.negative.timer-style-retro .percentage,
+    .ring-wrapper.negative.timer-style-retro .percentage p {
+        text-shadow:
+            0 0 6px var(--text-col),
+            0 0 14px var(--text-col);
     }
 </style>

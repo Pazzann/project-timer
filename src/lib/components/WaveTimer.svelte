@@ -7,17 +7,23 @@
     const stage = $derived(settings.stages?.[settings.activeStage]);
     const currentTime = $derived(settings.currentStageTime);
     const isOvertime = $derived(stage ? currentTime >= stage.time : false);
+    const isNegative = $derived(currentTime < 0);
     const flashOn = $derived(isOvertime && currentTime % 1000 > 500);
 
     const fillHeight = $derived((() => {
         if (!stage) return 0;
+        if (isNegative) {
+            // Drain: 100% at t=0 -> 0% at t=-stage.time
+            const drain = Math.max(0, Math.min(1, 1 + currentTime / stage.time));
+            return drain * 100;
+        }
         if (isOvertime) return 100;
         return ((currentTime % stage.time) / stage.time) * 100;
     })());
 </script>
 
 {#if stage}
-<div class="wave-container timer-style-{settings.theme.buttonStyle}" class:overtime={flashOn}>
+<div class="wave-container timer-style-{settings.theme.buttonStyle}" class:overtime={flashOn} class:negative={isNegative}>
     <div class="wave-fill" style="height: {fillHeight}%">
         <svg class="wave-svg wave-front-svg" viewBox="0 0 200 40" preserveAspectRatio="none">
             <path d="M0,20 Q25,0 50,20 Q75,0 100,20 Q125,0 150,20 Q175,0 200,20 L200,40 L0,40 Z" />
@@ -125,6 +131,26 @@
     .wave-container.overtime .wave-front-svg path,
     .wave-container.overtime .wave-back-svg path {
         fill: var(--timer-background-col);
+    }
+
+    /* Negative drain — water in text-col, text in secondary-col */
+    .wave-container.negative {
+        border-color: var(--text-col);
+    }
+
+    .wave-container.negative .wave-fill {
+        background: var(--text-col);
+    }
+
+    .wave-container.negative .wave-front-svg path,
+    .wave-container.negative .wave-back-svg path {
+        fill: var(--text-col);
+    }
+
+    .wave-container.negative .time-overlay,
+    .wave-container.negative .time-overlay p {
+        color: var(--primary-col);
+        text-shadow: none;
     }
 
     @keyframes wave-slide {

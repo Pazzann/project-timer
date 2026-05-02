@@ -6,8 +6,13 @@
 
     let {settings}: {settings: Settings} = $props();
 
+    const isNegative = $derived(settings.currentStageTime < 0);
+
     $effect(() => {
-        if(overTime){
+        if (isNegative) {
+            // Solid fill in contrast color — pulse handled by CSS
+            progressBar.style.background = `var(--text-col)`;
+        } else if(overTime){
             if (settings.currentStageTime % 1000 > 500){
                 progressBar.style.background = `var(--timer-background-col)`;
             }else {
@@ -20,7 +25,7 @@
     });
 </script>
 
-<div bind:this={progressBar} class="circular-progress">
+<div bind:this={progressBar} class="circular-progress" class:negative={isNegative}>
     <div class="percentage text-5xl font-bold">
         <p>{MsToTime(settings.currentStageTime, settings.showSettings)}</p>
         <p>{MsToTime(settings.stages[settings.activeStage].time, settings.showSettings)}</p>
@@ -42,5 +47,21 @@
         flex-direction: column;
         position: relative;
         color: var(--text-col);
+    }
+
+    /* Negative state: pulse the whole disc */
+    .circular-progress.negative {
+        animation: negative-pulse 1s ease-in-out infinite;
+    }
+
+    .circular-progress.negative .percentage,
+    .circular-progress.negative .percentage p {
+        color: var(--primary-col);
+        text-shadow: none;
+    }
+
+    @keyframes negative-pulse {
+        0%, 100% { filter: brightness(1); }
+        50%      { filter: brightness(1.4); }
     }
 </style>

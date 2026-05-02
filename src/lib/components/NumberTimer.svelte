@@ -7,6 +7,7 @@
     const stage = $derived(settings.stages?.[settings.activeStage]);
     const currentTime = $derived(settings.currentStageTime);
     const isOvertime = $derived(stage ? currentTime >= stage.time : false);
+    const isNegative = $derived(currentTime < 0);
     const flashOn = $derived(isOvertime && currentTime % 1000 > 500);
 
     const currentTimeStr = $derived(stage ? MsToTime(currentTime, settings.showSettings) : '');
@@ -18,7 +19,7 @@
 </script>
 
 {#if stage}
-<div class="number-timer timer-style-{settings.theme.buttonStyle}" class:overtime={flashOn}>
+<div class="number-timer timer-style-{settings.theme.buttonStyle}" class:overtime={flashOn} class:negative={isNegative}>
     <div class="time-row main-time">
         {#each currentTimeStr.split('') as char}
             {#if isDigit(char)}
@@ -138,5 +139,37 @@
     .number-timer.overtime .digit {
         background: var(--timer-background-col);
         border-color: var(--timer-background-col);
+    }
+
+    /* Negative state — pulse + scheme color swap (fill = text-col, text = primary-col) */
+    .number-timer.negative .digit {
+        background: var(--text-col);
+        color: var(--primary-col);
+        border-color: var(--text-col);
+        animation: number-negative-pulse 0.9s ease-in-out infinite;
+    }
+
+    .number-timer.negative .separator {
+        color: var(--text-col);
+        animation: number-negative-pulse 0.9s ease-in-out infinite;
+    }
+
+    .number-timer.negative.timer-style-retro .digit,
+    .number-timer.negative.timer-style-retro .separator {
+        text-shadow:
+            0 0 4px var(--text-col),
+            0 0 12px var(--text-col),
+            0 0 24px var(--text-col);
+    }
+
+    .number-timer.negative.timer-style-retro .digit {
+        box-shadow:
+            0 0 8px var(--text-col),
+            inset 0 0 12px rgba(0, 0, 0, 0.35);
+    }
+
+    @keyframes number-negative-pulse {
+        0%, 100% { opacity: 1; }
+        50%      { opacity: 0.55; }
     }
 </style>

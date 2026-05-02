@@ -13,9 +13,15 @@
     const stage = $derived(settings.stages?.[settings.activeStage]);
     const currentTime = $derived(settings.currentStageTime);
     const isOvertime = $derived(stage ? currentTime >= stage.time : false);
+    const isNegative = $derived(currentTime < 0);
 
     const filledCells = $derived((() => {
         if (!stage) return 0;
+        if (isNegative) {
+            // Drain: full at t=0, empty at t=-stage.time
+            const drainProgress = Math.max(0, Math.min(1, 1 + currentTime / stage.time));
+            return Math.ceil(drainProgress * TOTAL_CELLS);
+        }
         if (isOvertime) return TOTAL_CELLS;
         const progress = (currentTime % stage.time) / stage.time;
         return Math.floor(progress * TOTAL_CELLS);
@@ -35,7 +41,7 @@
 </script>
 
 {#if stage}
-<div class="blocks-timer timer-style-{settings.theme.buttonStyle}">
+<div class="blocks-timer timer-style-{settings.theme.buttonStyle}" class:negative={isNegative}>
     <div class="blocks-grid">
         {#each { length: TOTAL_CELLS } as _, i}
             <div
@@ -193,5 +199,24 @@
     .total-time {
         font-size: 0.6em;
         opacity: 0.7;
+    }
+
+    /* Negative drain — filled blocks in text-col, time text in secondary-col */
+    .blocks-timer.negative {
+        border-color: var(--text-col);
+    }
+
+    .blocks-timer.negative .block.filled {
+        background: var(--text-col);
+    }
+
+    .blocks-timer.negative.timer-style-retro .block.filled {
+        box-shadow: 0 0 6px var(--text-col), 0 0 12px var(--text-col);
+    }
+
+    .blocks-timer.negative .time-display,
+    .blocks-timer.negative .time-display span {
+        color: var(--secondary-col);
+        text-shadow: none;
     }
 </style>

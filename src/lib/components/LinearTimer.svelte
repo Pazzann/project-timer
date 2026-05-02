@@ -2,21 +2,24 @@
     import { MsToTime } from "../functions/MsToTime";
     import type Settings from "../interfaces/Settings";
 
-    // We bind to the inner 'fill' element
     let progressFill: HTMLDivElement;
     let overTime: boolean = false;
 
     let { settings }: { settings: Settings } = $props();
 
+    const isNegative = $derived(settings.currentStageTime < 0);
+
     $effect(() => {
-        // Get the total time for the current stage
         const totalTime = settings.stages[settings.activeStage].time;
         const currentTime = settings.currentStageTime;
 
         if (progressFill) {
-            if (overTime) {
-                // --- Overtime Logic ---
-                // Keep the bar full, but flash the color
+            if (isNegative) {
+                // Drain: 100% at t=0 -> 0% at t=-totalTime
+                const drainProgress = Math.max(0, Math.min(1, 1 + currentTime / totalTime));
+                progressFill.style.width = `${drainProgress * 100}%`;
+                progressFill.style.background = `var(--text-col)`;
+            } else if (overTime) {
                 progressFill.style.width = '100%';
                 if (currentTime % 1000 > 500) {
                     progressFill.style.background = `var(--timer-background-col)`;
@@ -24,22 +27,17 @@
                     progressFill.style.background = `var(--secondary-col)`;
                 }
             } else {
-                // --- Normal Progress Logic ---
-                // Calculate the percentage width
                 const percentage = (currentTime % totalTime) / totalTime * 100;
-
-                // Set the width and ensure the color is normal
                 progressFill.style.width = `${percentage}%`;
                 progressFill.style.background = `var(--secondary-col)`;
             }
         }
 
-        // Update overTime state for the *next* run
         overTime = currentTime >= totalTime;
     });
 </script>
 
-<div class="linear-progress-bar timer-style-{settings.theme.buttonStyle}">
+<div class="linear-progress-bar timer-style-{settings.theme.buttonStyle}" class:negative={isNegative}>
 
     <div bind:this={progressFill} class="progress-fill"></div>
 
@@ -126,5 +124,25 @@
 
     .timer-style-retro .percentage {
         text-shadow: 0 0 8px var(--secondary-col);
+    }
+
+    /* Negative drain — fill in text-col, text in secondary-col */
+    .linear-progress-bar.negative {
+        border-color: var(--text-col);
+    }
+
+    .linear-progress-bar.negative .percentage,
+    .linear-progress-bar.negative .percentage p {
+        color: var(--primary-col);
+        text-shadow: none;
+    }
+
+    .linear-progress-bar.negative.timer-style-retro {
+        box-shadow: 0 0 10px var(--text-col), inset 0 0 15px rgba(0, 0, 0, 0.4);
+    }
+
+    .linear-progress-bar.negative.timer-style-retro .percentage,
+    .linear-progress-bar.negative.timer-style-retro .percentage p {
+        text-shadow: 0 0 8px var(--text-col);
     }
 </style>
