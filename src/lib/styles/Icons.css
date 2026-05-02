@@ -36,6 +36,7 @@
 .icon-default.pause-icon        { -webkit-mask-image: url("../icons/default/pause.svg");         mask-image: url("../icons/default/pause.svg"); }
 .icon-default.full-reset-icon   { -webkit-mask-image: url("../icons/default/reset-full.svg");    mask-image: url("../icons/default/reset-full.svg"); }
 .icon-default.folder-icon       { -webkit-mask-image: url("../icons/default/folder.svg");        mask-image: url("../icons/default/folder.svg"); }
+.icon-default.expand-icon       { -webkit-mask-image: url("../icons/default/expand-arrow.svg");        mask-image: url("../icons/default/expand-arrow.svg"); }
 
 /* ============================================================
    MATERIAL ICON PACK
@@ -61,3 +62,4 @@
 .icon-material.pause-icon       { -webkit-mask-image: url("../icons/material/pause.svg");        mask-image: url("../icons/material/pause.svg"); }
 .icon-material.full-reset-icon  { -webkit-mask-image: url("../icons/material/reset-full.svg");   mask-image: url("../icons/material/reset-full.svg"); }
 .icon-material.folder-icon      { -webkit-mask-image: url("../icons/material/folder.svg");       mask-image: url("../icons/material/folder.svg"); }
+.icon-material.expand-icon      { -webkit-mask-image: url("../icons/material/expand-arrow.svg");       mask-image: url("../icons/material/expand-arrow.svg"); }

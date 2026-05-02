@@ -6,6 +6,11 @@ export function MsToTime(s: number, showSett: string[]): string {
         return ('00' + n).slice(-z);
     }
 
+    let isNegative: boolean = s< 0? true : false;
+    if (isNegative) {
+        s = Math.abs(s);
+    }
+
     let ms = s % 1000/10;
     s = (s - ms* 10) / 1000;
     ms = Math.floor(ms);
@@ -14,7 +19,8 @@ export function MsToTime(s: number, showSett: string[]): string {
     let mins = s % 60;
     let hrs = (s - mins) / 60;
 
-    return (showSett.includes("h") ? pad(hrs) + 'h' : "") +
+    return ( isNegative? "-" : "" )+
+            (showSett.includes("h") ? pad(hrs) + 'h' : "") +
             (showSett.includes("m") ?  pad(mins) + 'm' : "") +
             (showSett.includes("s") ?  pad(secs) + "s" : "") +
             (showSett.includes("ms") ?  pad(ms) + "ms": "");

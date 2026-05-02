@@ -1,0 +1,1 @@
+export type OverlapBehaviour = "auto-new-stage" | "allow-overlap";

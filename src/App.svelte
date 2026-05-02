@@ -33,6 +33,7 @@
     import "./lib/styles/Select.css";
     import "./lib/styles/Panel.css";
     import {onDestroy, onMount} from "svelte";
+    import getDefaultStage from "./lib/functions/getDefaultStage";
     
 
     let useCustomCSS: boolean = $state(false);
@@ -216,6 +217,13 @@
                 parsedSettings.deltaTime = 10000;
                 parsedSettings.deltaTimeShowSetting = "ms";
                 parsedSettings.appVersion = getDefaultSettings().appVersion;
+                for (let i = 0; i < parsedSettings.stages.length; i++) {
+                    parsedSettings.stages[i].settings = {
+                        //@ts-ignore
+                        overlapBehaviour: parsedSettings?.type ?? "allow-overlap",
+                        canGoNegative: false
+                    }
+                }
             }
 
             for (let i = 0; i < parsedSettings.stages.length; i++) {
@@ -247,7 +255,7 @@
             settings.stages[i].index = i;
         }
         if (settings.stages.length == 0) {
-            settings.stages.push({id: "Default", time: 15000, type: "allow-overlap", index: 0});
+            settings.stages.push(getDefaultStage(0));
             settings.activeStage = 0;
         }
         if (settings.activeStage >= settings.stages.length) {
@@ -317,7 +325,7 @@
                 const now = Date.now();
                 settings.currentStageTime += now - startTime;
                 startTime = now;
-                if (settings.stages[settings.activeStage].type === "auto-new-stage" && settings.currentStageTime >= settings.stages[settings.activeStage].time) {
+                if (settings.stages[settings.activeStage].settings.overlapBehaviour === "auto-new-stage" && settings.currentStageTime >= settings.stages[settings.activeStage].time) {
                     if (settings.activeStage < settings.stages.length - 1) {
                         settings.activeStage += 1;
                         settings.currentStageTime = 0;
@@ -373,7 +381,7 @@
                 break;
         }
         settings.currentStageTime += multiplier * dt;
-        if (settings.currentStageTime < 0) {
+        if (settings.currentStageTime < 0 && !settings.stages[settings.activeStage].settings.canGoNegative) {
             settings.currentStageTime = 0;
         }
         startTime = Date.now();
@@ -406,7 +414,7 @@
                          class={"settingsBody panelBody flex flex-col gap-1.5 timer-panel-" + settings.theme.buttonStyle}>
                         <div class="flex flex-row justify-between w-full items-center">
                             <p> Stages: </p>
-                            <button onclick={()=>{settings.stages.push({id: "Default", time: 15000, type:"allow-overlap", index: settings.stages.length})}}
+                            <button onclick={()=>{settings.stages.push(getDefaultStage(settings.stages.length))}}
                                     class={"timer-button-"+settings.theme.buttonStyle + " timer-common-" + settings.theme.buttonStyle} aria-label="Add stage">
                                 <div class={"icon icon-" + settings.theme.iconPack + " add-icon"}/>
                             </button>
