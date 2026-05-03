@@ -48,3 +48,7 @@
     width: 120px;
     font-family: 'Courier New', Courier, monospace;
 }
+
+.timer-select-retro option {
+    background: var(--background-col);
+}
