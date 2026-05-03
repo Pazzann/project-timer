@@ -29,6 +29,10 @@
     -webkit-backdrop-filter: blur(8px);
 }
 
+.timer-select-glass option{
+    background: color-mix(in srgb, white 40%, var(--background-col));
+}
+
 .timer-select-neumorphism{
     font-size: 18px;
     padding: 5px;
